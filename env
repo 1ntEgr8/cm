@@ -1,0 +1,24 @@
+export bin_install=""
+export app_install=""
+
+info() {
+  echo "[info]" $@
+}
+
+warn() {
+  echo "[warn]" $@
+}
+
+success() {
+  echo "[success]" $@
+}
+
+error() {
+  echo "[error]" $@
+  exit 1
+}
+
+export -f info
+export -f warn
+export -f success
+export -f error
