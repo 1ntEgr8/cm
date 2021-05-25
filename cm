@@ -1,22 +1,7 @@
 #!/usr/bin/env bash
 
-# source installation env
-source ./env
-
-# stop if any failue encountered
 set -e
-
-function handle_install() {
-  formulae=$(find . -type f -name formula)
-
-  # make formulae executable
-  chmod +x $formulae
-  
-  for formula in $formulae; do
-    $formula install
-    $formula configure
-  done
-}
+source ./env
 
 if [[ $# -eq 0 ]]; then
   help_text
