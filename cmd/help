@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+main() {
+    cmd="$1"
+
+    help_file="./help/$cmd"    
+    if [[ ! -e $help_file ]]; then
+        error "The command $1 does not exist"
+    fi
+    cat $help_file
+}
+
+$@

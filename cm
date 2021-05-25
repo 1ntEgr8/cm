@@ -6,90 +6,6 @@ source ./env
 # stop if any failue encountered
 set -e
 
-create_formula() {
-  formula="$1"
-  
-  if [[ -e "$formula/formula" ]]; then
-    error "formula $formula already exists"
-  fi
-
-  mkdir -p "$formula"
-  touch "$formula/formula"
-  cp ./templates/formula_template "$formula/formula"
-  info "created formula $formula_dir"
-}
-
-prompt_to_save_link() {
-  if [[ ! -e "./links" ]]; then
-    touch "./links"
-  fi
-  repo_relative_path="$1"
-  echo "FIXME: path/to/symlink -> $repo_relative_path" >> "./links"
-  vim "./links"
-}
-
-add_file_to_formula() {
-  file="$1"
-  formula="$2"
-  flag_link="$3"
-  
-  info "adding $file to $formula"
-
-  if [[ ! -e "$formula/formula" ]]; then
-    create_formula "$formula"
-  fi
-  
-  cp "$file" "$formula"
-
-  if [[ "$flag_link" ]]; then
-    info "creating a symlink"
-    ln -svf "$formula/$(basename $file)" "$file"
-    prompt_to_save_link "$formula/$(basename $file)"
-  fi
-    
-  success
-}
-
-handle_add() {
-  local flag_formula
-  local flag_link
-
-  for arg in "$@"; do
-    case $1 in
-      -f|--formula)
-        shift
-        flag_formula=true
-        ;;
-      -l|--link)
-        shift
-        flag_link=true
-        ;;
-      *)
-        break
-        ;;
-    esac
-  done
-
-  if [[ $flag_formula && ! $flag_link ]]; then
-    create_formula "$1"
-  else
-    add_file_to_formula "$1" "$2" $flag_link
-  fi
-}
-
-
-handle_edit() {
-  if [[ $# -eq 0 ]]; then
-    error "missing formula name"
-  fi
-
-  if [[ ! -e $1/formula ]]; then
-    error "formula doesn't exist"
-  fi
-
-  vim $1/formula
-}
-
 function handle_install() {
   formulae=$(find . -type f -name formula)
 
@@ -106,34 +22,11 @@ if [[ $# -eq 0 ]]; then
   help_text
 fi
 
-case $1 in
-  add)
+cmd="$1"
+if [[ ! -e "cmd/$cmd" ]]; then
+    warn "The command $cmd doesn't exist. See help text below for a list of supported commands"
+    cmd/help "main" "index"
+else
     shift
-    handle_add $@
-    ;;
-  rm)
-    ;;
-  edit)
-    shift
-    handle_edit $@
-    ;;
-  install)
-    shift
-    handle_install $@
-    ;;
-  commit)
-    ;;
-  diff)
-    ;;
-  help)
-    shift
-    help_file="./help/$1"
-    if [[ ! -e $help_file ]]; then
-      error "The command $1 does not exist"
-    fi
-    cat "./help/$1"
-    ;;
-  *)
-    cat "./help/index"
-    ;;
-esac
+    cmd/$cmd "main" $@
+fi

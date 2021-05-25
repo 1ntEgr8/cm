@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+main() {
+    if [[ $# -eq 0 ]]; then
+        error "missing formula name"
+    fi
+
+    if [[ ! -e $1/formula ]]; then
+      error "formula doesn't exist"
+    fi
+
+    vim $1/formula
+}
+
+$@
