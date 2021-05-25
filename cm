@@ -1,109 +1,92 @@
 #!/usr/bin/env bash
 
 # cm add
-  # easy way to track new dotfiles
-# cm rm
-  # easy way to remove file from dotfiles repo
-# cm edit
-  # easy way to edit file in dotfiles repo
-# cm install [formulae]
-  # if no formulae passed, all
-# cm uninstall [formulae]
-  # if no formulate passed, all
-  # print warning before doing it
-# cm commit
-  # easy way to commit changes
-# cm diff
-  # easy way to view changes
+  # track new dotfiles
+  # cm add <dotfile> <formula>
+    # creates the formula if it doesn't exist
+    # copy the dotfile to the formula
+    # prompt user to add a link line to 'links'
+    # takes in a -l flag for "symlink"
 
 # source installation env
 source ./env
 
-function help_text() {
+# stop if any failue encountered
+set -e
+
+help_text() {
   echo "help"
 }
 
-function handle_add() {
-  case $1 in
-    -f|--formula)
-      shift
-      
-      if [[ $# -eq 0 ]]; then
-        error "missing formula"
-      fi
-      
-      formula_dir=$1
-      formula=$formula_dir/formula
-      
-      if [[ -e $formula ]]; then
-        info "formula $formula_dir exists"
-        exit 0
-      fi
+create_formula() {
+  formula="$1"
+  
+  if [[ -e "$formula/formula" ]]; then
+    error "formula $formula already exists"
+  fi
 
-      mkdir -p $formula_dir
-      touch $formula
+  mkdir -p "$formula"
+  touch "$formula/formula"
+  cp ./templates/formula_template "$formula/formula"
+  info "created formula $formula_dir"
+}
 
-      cp ./templates/formula_template $formula
-      
-      info "created formula $formula_dir"
-      ;;
-    -*)
-      error "invalid flag" $1
-      ;;
-    *)
-      if [[ $# -lt 2 ]]; then
-        error "insufficient arguments"
-      fi
-      
-      config_file=$1
-      formula=$2
-      relative_link_path=$formula/$(basename $config_file)
-      
-      if [[ ! -e $config_file ]]; then
-        error "config file $config_file does not exist"
-      fi
+prompt_to_save_link() {
+  if [[ ! -e "./links" ]]; then
+    touch "./links"
+  fi
+  repo_relative_path="$1"
+  echo "FIXME: path/to/symlink -> $repo_relative_path" >> "./links"
+  vim "./links"
+}
 
-      if [[ ! -e ./links ]]; then
-        touch links
-      fi
+add_file_to_formula() {
+  file="$1"
+  formula="$2"
+  flag_link="$3"
+  
+  info "adding $file to $formula"
 
-      if [[ -e $formula/$(basename $config_file) ]]; then
-        error "config file $config_file already being tracked"
-      fi
+  if [[ ! -e "$formula/formula" ]]; then
+    create_formula "$formula"
+  fi
+  
+  cp "$file" "$formula"
 
-      # copy config file to formula
-      cp $config_file $formula
+  if [[ "$flag_link" ]]; then
+    info "creating a symlink"
+    ln -svf "$formula/$(basename $file)" "$file"
+    prompt_to_save_link "$formula/$(basename $file)"
+  fi
+    
+  success
+}
 
-      out=$(grep -F "$relative_link_path" links)
-      if [[ $? -eq 0 ]]; then
-        echo $out
-        error "a link already exists"
-      fi
-      
-      # create temp edit file
-      touch EDITLINK
-      cp ./templates/add_link EDITLINK
+handle_add() {
+  local flag_formula
+  local flag_link
 
-      # replace first line of template with partially complete link
-      sed -i "" "1 s|.*|FIXME -> $relative_link_path|" EDITLINK
+  for arg in "$@"; do
+    case $1 in
+      -f|--formula)
+        shift
+        flag_formula=true
+        ;;
+      -l|--link)
+        shift
+        flag_link=true
+        ;;
+      *)
+        break
+        ;;
+    esac
+  done
 
-      # read link from user
-      vim EDITLINK
-      new_link=$(head -n 1 EDITLINK)
-      rm EDITLINK 
-
-      # append link
-      echo $new_link >> links
-      
-      # perform the link
-      parts=($new_link)
-      src=${parts[2]}
-      target="${parts[0]}"
-      echo $src
-      echo $target
-      # ln -svf $(pwd)/$src $target
-      ;;
-  esac
+  if [[ $flag_formula && ! $flag_link ]]; then
+    create_formula "$1"
+  else
+    add_file_to_formula "$1" "$2" $flag_link
+  fi
 }
 
 function handle_edit() {
