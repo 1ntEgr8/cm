@@ -15,7 +15,22 @@ source ./env
 set -e
 
 help_text() {
-  echo "help"
+cat <<EOF 
+cm - a chad config manager
+
+USAGE:
+    ./cm [--help] [--version] subcommand [<args>]
+
+OPTIONS:
+    --help      Prints this help text
+    --version   Prints version info
+
+SUBCOMMANDS:
+    add         Add a file/formula to the config manager
+    edit        Edit a formula
+
+See ./cm help <subcommand> for more information on a specific subcommand
+EOF
 }
 
 create_formula() {
