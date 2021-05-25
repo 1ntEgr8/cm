@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-# cm add
-  # track new dotfiles
-  # cm add <dotfile> <formula>
-    # creates the formula if it doesn't exist
-    # copy the dotfile to the formula
-    # prompt user to add a link line to 'links'
-    # takes in a -l flag for "symlink"
-
 # source installation env
 source ./env
 
@@ -104,7 +96,32 @@ handle_add() {
   fi
 }
 
-function handle_edit() {
+help_text_add() {
+cat <<EOF
+cm-add
+
+USAGE:
+    ./cm add --formula <formula-name>
+        Creates a formula named <formula-name>
+
+    ./cm add <file> <formula-name>
+        Adds <file> to <formula-name>. No symlinks created.
+
+    ./cm add --link <file> <formula-name>
+        Adds <file> to <formula-name> and symlinks it.
+
+NOTES:
+    When using the --link flag, you will be prompted to enter a link. This link
+    will be stored in the "<formula-name>/links" file. 
+
+    Link syntax:
+        <path/to/file> -> <path/to/file/in/repo>
+
+    The link will be applied when installing the formula.
+EOF
+}
+
+handle_edit() {
   if [[ $# -eq 0 ]]; then
     error "missing formula name"
   fi
@@ -150,6 +167,10 @@ case $1 in
   commit)
     ;;
   diff)
+    ;;
+  help)
+    shift
+    "help_text_$1"
     ;;
   *)
     help_text
