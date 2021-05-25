@@ -1,0 +1,12 @@
+cm-edit
+
+USAGE:
+    ./cm edit <formula-name>
+        Opens "<formula-name>/formula" in vim for editing
+
+NOTES:
+    Every formula has to implement two functions: install and configure
+
+    install       Installs any required software for the formula
+    configure     Post-install configuration
+

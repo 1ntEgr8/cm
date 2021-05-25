@@ -6,66 +6,6 @@ source ./env
 # stop if any failue encountered
 set -e
 
-help_text() {
-cat <<EOF 
-cm - a chad config manager
-
-USAGE:
-    ./cm [--help] [--version] subcommand [<args>]
-
-OPTIONS:
-    --help      Prints this help text
-    --version   Prints version info
-
-SUBCOMMANDS:
-    add         Add a file/formula to the config manager
-    edit        Edit a formula
-
-See ./cm help <subcommand> for more information on a specific subcommand
-EOF
-}
-
-help_text_add() {
-cat <<EOF
-cm-add
-
-USAGE:
-    ./cm add --formula <formula-name>
-        Creates a formula named <formula-name>
-
-    ./cm add <file> <formula-name>
-        Adds <file> to <formula-name>. No symlinks created.
-
-    ./cm add --link <file> <formula-name>
-        Adds <file> to <formula-name> and symlinks it.
-
-NOTES:
-    When using the --link flag, you will be prompted to enter a link. This link
-    will be stored in the "<formula-name>/links" file. 
-
-    Link syntax:
-        <path/to/file> -> <path/to/file/in/repo>
-
-    The link will be applied when installing the formula.
-EOF
-}
-
-help_text_edit() {
-cat <<EOF
-cm-edit
-
-USAGE:
-    ./cm edit <formula-name>
-        Opens "<formula-name>/formula" in vim for editing
-
-NOTES:
-  Every formula has to implement two functions: install and configure
-
-  install       Installs any required software for the formula
-  configure     Post-install configuration
-EOF
-}
-
 create_formula() {
   formula="$1"
   
@@ -187,9 +127,13 @@ case $1 in
     ;;
   help)
     shift
-    "help_text_$1"
+    help_file="./help/$1"
+    if [[ ! -e $help_file ]]; then
+      error "The command $1 does not exist"
+    fi
+    cat "./help/$1"
     ;;
   *)
-    help_text
+    cat "./help/index"
     ;;
 esac

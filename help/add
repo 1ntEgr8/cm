@@ -1,0 +1,20 @@
+cm-add
+
+USAGE:
+    ./cm add --formula <formula-name>
+        Creates a formula named <formula-name>
+
+    ./cm add <file> <formula-name>
+        Adds <file> to <formula-name>. No symlinks created.
+
+    ./cm add --link <file> <formula-name>
+        Adds <file> to <formula-name> and symlinks it.
+
+NOTES:
+    When using the --link flag, you will be prompted to enter a link. This link
+    will be stored in the "<formula-name>/links" file. 
+
+    Link syntax:
+        <path/to/file> -> <path/to/file/in/repo>
+
+    The link will be applied when installing the formula.
