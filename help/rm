@@ -1,0 +1,13 @@
+cm-rm
+
+USAGE:
+    ./cm rm [item ...]
+        Attempts to remove each item.
+    
+    ./cm rm --dry-run [item ...]
+        Lists the paths to each of the items.
+
+NOTES:
+    If the item to be removed has a link in ./links, cm will ask if you
+    want to get rid of the symlink or leave a copy at that location. This
+    is done so as to avoid leaving broken symlinks in the system.
