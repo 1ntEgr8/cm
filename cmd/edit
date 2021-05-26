@@ -6,7 +6,7 @@ main() {
     fi
 
     if [[ ! -e $1/formula ]]; then
-      error "formula doesn't exist"
+        error "formula doesn't exist"
     fi
 
     vim $1/formula
