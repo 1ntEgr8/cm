@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
+# ./cm install [formula ...]
 main() {
-    # find all formula files
-    # run the "install" function
-    # run the "configure" function
+    # TODO
 }
 
 $@

@@ -1,0 +1,15 @@
+cm-install
+
+USAGE:
+    ./cm install
+        Installs and configures all formulae present in current working directory
+
+    ./cm install [formula ...]
+        Installs and configures each formula
+
+NOTES:
+    Installation order:
+        - Look for a formula file in the current working directory. If it
+          exists, execute it
+        - Repeat the above step for each directory in the current working
+          directory

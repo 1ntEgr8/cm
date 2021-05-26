@@ -1,4 +1,4 @@
-cm - a chad config manager
+cm - a dumb config manager
 
 USAGE:
     ./cm [--help] [--version] subcommand [<args>]
@@ -10,5 +10,7 @@ OPTIONS:
 SUBCOMMANDS:
     add         Add a file/formula to the config manager
     edit        Edit a formula
+    rm          Remove files/formulae
+    install     Install and configure formulae
 
 See ./cm help <subcommand> for more information on a specific subcommand
