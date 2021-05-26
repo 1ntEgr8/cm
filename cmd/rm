@@ -45,12 +45,37 @@ rm_file() {
         rm $filepath
         info "removed $filepath"
     fi
+}
 
-    success
+rm_formula() {
+    local formula="$1"
+    
+    if [[ ! -d $formula ]]; then
+        error "$formula is not a formula"
+    fi
+
+    items=$(ls -A $formula)
+    for item in $items; do
+        dispatch $formula/$item
+    done
+    
+    rm -r $formula
+    info "removed $formula"
+}
+
+dispatch() {
+    if [[ -d "$1" ]]; then
+        rm_formula "$1"
+    else
+        rm_file "$1"
+    fi
 }
 
 main() {
-    rm_file "$1" 
+    for arg in $@; do
+        dispatch $arg
+    done
+    success
 }
 
 $@
