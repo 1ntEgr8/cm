@@ -2,23 +2,39 @@ export bin_install=""
 export app_install=""
 
 info() {
-  echo "[info]" $@
+    echo "[info]" $@
 }
 
 warn() {
-  echo "[warn]" $@
+    echo "[warn]" $@
 }
 
 success() {
-  echo "[success]" $@
+    echo "[success]" $@
 }
 
 error() {
-  echo "[error]" $@
-  exit 1
+    echo "[error]" $@
+    exit 1
+}
+
+# https://stackoverflow.com/questions/29436275/how-to-prompt-for-yes-or-no-in-bash
+yes_or_no() {
+    while true; do
+        read -p "$* [y/n]: " yn
+        case $yn in
+            [Yy]*) 
+                return 0
+                ;;
+            [Nn]*)
+                return 1
+                ;;
+        esac
+    done
 }
 
 export -f info
 export -f warn
 export -f success
 export -f error
+export -f yes_or_no

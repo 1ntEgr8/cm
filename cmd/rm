@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+rm_file() {
+    filepath="$1"
+    filename=$(basename $filepath)
+
+    # check if it is a file (and not a dir)
+    if [[ ! -f $filepath ]]; then
+        error "$filepath is not a file"
+    fi
+
+    # check if link exists
+    if [[ ! -e $filepath ]]; then
+        error "File $filepath does not exist"
+    fi
+
+    # check if link exists
+    out=$(grep -F "$filename" ./links)
+    if [[ $? -eq 0 ]]; then
+        # warn about link
+        symlink=$(echo "$out" | awk '{print $1}')
+
+        # replace ~ with $HOME
+        symlink=${symlink/#\~/$HOME}
+        
+        if [[ -L "$symlink" ]]; then
+            warn "$symlink is symlinked to $filepath"
+            warn "Removing '$filepath' will result in a broken symlink '$symlink'"
+            yes_or_no "Do you want to keep a copy of '$filepath' at '$symlink'?"
+
+            if [[ $? -eq 0 ]]; then
+                unlink $symlink
+                cp $filepath $symlink
+                info "created copy"
+            else
+                unlink $symlink
+                rm $filepath
+                info "removed $filepath and $symlink"
+            fi
+        fi
+
+        # remove line from ./links
+        sed -i '' "/$filename/d" ./links
+    else
+        rm $filepath
+        info "removed $filepath"
+    fi
+
+    success
+}
+
+main() {
+    rm_file "$1" 
+}
+
+$@
