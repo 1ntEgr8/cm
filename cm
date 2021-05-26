@@ -4,7 +4,7 @@ set -e
 source ./env
 
 if [[ $# -eq 0 ]]; then
-  help_text
+    help_text
 fi
 
 cmd="$1"

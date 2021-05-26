@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+main() {
+    # find all formula files
+    # run the "install" function
+    # run the "configure" function
+}
+
+$@

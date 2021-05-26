@@ -1,47 +1,47 @@
 #!/usr/bin/env bash
 
 create_formula() {
-  formula="$1"
-  
-  if [[ -e "$formula/formula" ]]; then
-    error "formula $formula already exists"
-  fi
+    formula="$1"
+    
+    if [[ -e "$formula/formula" ]]; then
+      error "formula $formula already exists"
+    fi
 
-  mkdir -p "$formula"
-  touch "$formula/formula"
-  cp ./templates/formula_template "$formula/formula"
-  info "created formula $formula_dir"
+    mkdir -p "$formula"
+    touch "$formula/formula"
+    cp ./templates/formula_template "$formula/formula"
+    info "created formula $formula_dir"
 }
 
 prompt_to_save_link() {
-  if [[ ! -e "./links" ]]; then
-    touch "./links"
-  fi
-  repo_relative_path="$1"
-  echo "FIXME: path/to/symlink -> $repo_relative_path" >> "./links"
-  vim "./links"
+    if [[ ! -e "./links" ]]; then
+      touch "./links"
+    fi
+    repo_relative_path="$1"
+    echo "FIXME: path/to/symlink -> $repo_relative_path" >> "./links"
+    vim "./links"
 }
 
 add_file_to_formula() {
-  file="$1"
-  formula="$2"
-  flag_link="$3"
-  
-  info "adding $file to $formula"
-
-  if [[ ! -e "$formula/formula" ]]; then
-    create_formula "$formula"
-  fi
-  
-  cp "$file" "$formula"
-
-  if [[ "$flag_link" ]]; then
-    info "creating a symlink"
-    ln -svf "$formula/$(basename $file)" "$file"
-    prompt_to_save_link "$formula/$(basename $file)"
-  fi
+    file="$1"
+    formula="$2"
+    flag_link="$3"
     
-  success
+    info "adding $file to $formula"
+
+    if [[ ! -e "$formula/formula" ]]; then
+      create_formula "$formula"
+    fi
+    
+    cp "$file" "$formula"
+
+    if [[ "$flag_link" ]]; then
+      info "creating a symlink"
+      ln -svf "$formula/$(basename $file)" "$file"
+      prompt_to_save_link "$formula/$(basename $file)"
+    fi
+      
+    success
 }
 
 
