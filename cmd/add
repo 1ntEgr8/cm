@@ -15,12 +15,14 @@ create_formula() {
 }
 
 prompt_to_save_link() {
-    if [[ ! -e "./links" ]]; then
-      touch "./links"
+    local formula="$1"
+    local item=$(basename "$2")
+    local links_path=$formula/links
+    if [[ ! -e $links_path ]]; then
+      touch $links_path
     fi
-    repo_relative_path="$1"
-    echo "FIXME: path/to/symlink -> $repo_relative_path" >> "./links"
-    vim "./links"
+    echo "FIXME: path/to/symlink -> $formula/$item" >> $links_path
+    vim $links_path
 }
 
 add_item_to_formula() {
@@ -39,7 +41,7 @@ add_item_to_formula() {
     if [[ "$flag_link" ]]; then
       info "creating a symlink"
       ln -svf "$formula/$(basename $item)" "$item"
-      prompt_to_save_link "$formula/$(basename $item)"
+      prompt_to_save_link "$formula" "$item"
     fi
       
     success
