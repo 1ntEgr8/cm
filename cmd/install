@@ -1,8 +1,54 @@
 #!/usr/bin/env bash
 
-# ./cm install [formula ...]
+install_formula() {
+    local formula="$1"
+    local dry_run="$2"
+
+    if [[ -e $formula/formula ]]; then
+        if [[ $dry_run ]]; then
+            echo "$formula/formula"
+        else
+            info "Installing $formula/formula"
+            "$formula/formula" install
+            info "Configuring $formula/formula"
+            "$formula/formula" configure
+        fi
+    fi
+
+    dirs=$(find $formula/* -type d -depth 0)
+
+    for dir in $dirs; do
+        install_formula $dir $dry_run 
+    done
+}
+
 main() {
-    # TODO
+    local dry_run
+
+    # process flags
+    for arg in $@; do
+        case $arg in
+            --dry-run)
+                shift
+                dry_run=true
+                info "DRY RUN"
+                break
+                ;;
+            -*)
+                error "Invalid flag $arg"
+                ;;
+        esac
+    done
+
+    if [[ $# -eq 0 ]]; then
+        install_formula . $dry_run
+    else
+        for arg in $@; do
+            install_formula $arg $dry_run
+        done
+    fi
+
+    success
 }
 
 $@

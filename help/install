@@ -7,6 +7,10 @@ USAGE:
     ./cm install [formula ...]
         Installs and configures each formula
 
+    ./cm install --dry-run [formula ...]
+        Lists the formula that will be installed in the order in which they
+        will be executed
+
 NOTES:
     Installation order:
         - Look for a formula file in the current working directory. If it

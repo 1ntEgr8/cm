@@ -10,6 +10,7 @@ create_formula() {
     mkdir -p "$formula"
     touch "$formula/formula"
     cp ./templates/formula_template "$formula/formula"
+    chmod +x "$formula/formula"
     info "created formula $formula_dir"
 }
 
