@@ -24,6 +24,7 @@ install_formula() {
 
 main() {
     local dry_run
+    local only_link
 
     # process flags
     for arg in $@; do
@@ -34,19 +35,35 @@ main() {
                 info "DRY RUN"
                 break
                 ;;
+            --link)
+                shift
+                only_link=true
+                break
+                ;;
             -*)
                 error "Invalid flag $arg"
                 ;;
         esac
     done
-
-    if [[ $# -eq 0 ]]; then
-        install_formula . $dry_run
-    else
-        for arg in $@; do
-            install_formula $arg $dry_run
-        done
+    
+    if [[ ! $only_link ]]; then
+      if [[ $# -eq 0 ]]; then
+          install_formula . $dry_run
+      else
+          for arg in $@; do
+              install_formula $arg $dry_run
+          done
+      fi
     fi
+
+    cat ./links | while read line; do
+        symlink=$(echo "$line" | awk '{print $1}')
+        symlink=${symlink/#\~/$HOME}
+
+        filepath=$(echo "$line" | awk '{print $3}')
+
+        ln -svf "$filepath" "$symlink"
+    done
 
     success
 }
