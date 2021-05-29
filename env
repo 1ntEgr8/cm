@@ -2,19 +2,19 @@ export bin_install=""
 export app_install=""
 
 info() {
-    echo "[info]" $@
+    echo "[info]" $@ 1>&2
 }
 
 warn() {
-    echo "[warn]" $@
+    echo "[warn]" $@ 1>&2
 }
 
 success() {
-    echo "[success]" $@
+    echo "[success]" $@ 1>&2
 }
 
 error() {
-    echo "[error]" $@
+    echo "[error]" $@ 1>&2
     exit 1
 }
 

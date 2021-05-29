@@ -39,6 +39,10 @@ add_item_to_formula() {
     item="$1"
     formula="$2"
     flag_link="$3"
+
+    if [[ ! -e $item ]]; then
+        error "'$item' does not exist" 
+    fi
     
     info "adding $item to $formula"
 
@@ -79,6 +83,10 @@ main() {
           ;;
       esac
     done
+
+    if [[ $# -lt 2 ]]; then
+        error "Insufficient number of args"
+    fi
 
     if [[ $flag_formula && ! $flag_link ]]; then
       create_formula "$1"

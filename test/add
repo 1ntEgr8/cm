@@ -12,8 +12,20 @@ test_add_with_no_link() {
     ]]
 }
 
+test_add_file_that_does_not_exist() {
+    ./cm add ${sandbox}/test_file ${sandbox}/foo
+    [[ $? -eq 1 ]]
+}
+
+test_add_missing_args() {
+    ! ./cm add &&
+    ! ./cm add ${sandbox}/test_file
+}
+
 main() {
-    test_add_with_no_link
+    run test_add_with_no_link
+    run test_add_file_that_does_not_exist 
+    run test_add_missing_args
 }
 
 $@

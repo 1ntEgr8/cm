@@ -1,16 +1,35 @@
 #!/usr/bin/env bash
 
-main() {
-    mkdir sandbox
-    export sandbox=./sandbox
+run() {
+    local cmd=$@
     
-    if ! ./test/add "main" > /dev/null; then
-        echo "FAILED"
+    # make sandbox
+    mkdir -p "$cmd.sandbox"
+    export sandbox="$cmd.sandbox"
+    
+    # run test and report result
+    $cmd 2> "$cmd.log"
+    if [[ $? -eq 0 ]]; then
+        echo "PASS $cmd"
+        rm "$cmd.log"
+        rm -rf ${sandbox}
     else
-        echo "PASS"
+        echo "FAIL $cmd"
+        echo ">>>>>>>>"
+        echo "Output:"
+        echo ""
+        cat "$cmd.log"
+        echo ""
+        echo "Note: You can view this log at '$cmd.log'"
+        echo "Note: You can view the sandbox for this run at '$cmd.sandbox'"
+        echo "<<<<<<<<"
     fi
+}
 
-    rm -rf sandbox
+main() {
+    export -f run
+    
+    ./test/add main
 }
 
 main
