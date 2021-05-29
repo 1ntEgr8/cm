@@ -1,20 +1,46 @@
 #!/usr/bin/env bash
 
+check_correct_no_link_formula() {
+    local formula="$1"
+    local item="$2"
+
+    [[  -e ${sandbox}/$formula/$(basename $item) && \
+        -e ${sandbox}/$formula/formula && \
+        ! -e ${sandbox}/$formula/links \
+    ]]
+}
+
+check_correct_link_formula() {
+    local formula="$1"
+    local item="$2"
+
+    abs_path_to_file=$(norm_path "${sandbox}/$item")
+    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/$formula/$(basename $item)"
+
+    echo "LINK LINE TO FIND: " $link_line
+
+    grep -Fq "$link_line" "${sandbox}/$formula/links"
+    search_status=$?
+
+    [[  -e ${sandbox}/$formula/$(basename $item) && \
+        -e ${sandbox}/$formula/formula && \
+        -e ${sandbox}/$formula/links && \
+        -L ${sandbox}/$(basename $item) && \
+        $search_status -eq 0
+    ]]
+}
+
 test_add_with_no_link() {
     touch ${sandbox}/test_file
     echo "test_file" > ${sandbox}/test_file
 
     ./cm add ${sandbox}/test_file ${sandbox}/foo
     
-    [[  -e ${sandbox}/foo/test_file && \
-        -e ${sandbox}/foo/formula && \
-        ! -e ${sandbox}/foo/links \
-    ]]
+    check_correct_no_link_formula foo test_file
 }
 
 test_add_file_that_does_not_exist() {
-    ./cm add ${sandbox}/test_file ${sandbox}/foo
-    [[ $? -eq 1 ]]
+    ! ./cm add ${sandbox}/test_file ${sandbox}/foo
 }
 
 test_add_missing_args() {
@@ -22,10 +48,54 @@ test_add_missing_args() {
     ! ./cm add ${sandbox}/test_file
 }
 
+test_add_with_link() {
+    touch ${sandbox}/test_file
+    echo "test_file" > ${sandbox}/test_file
+
+    ./cm add -l ${sandbox}/test_file ${sandbox}/foo
+    
+    abs_path_to_file=$(norm_path "${sandbox}/test_file")
+    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/foo/test_file"
+
+    echo "LINK LINE TO FIND: " $link_line
+
+    grep -Fq "$link_line" "${sandbox}/foo/links"
+    search_status=$?
+    
+    check_correct_link_formula foo test_file
+}
+
+test_add_nested_with_no_link() {
+    touch ${sandbox}/test_file1 ${sandbox}/test_file2 ${sandbox}/test_file3
+
+    ./cm add ${sandbox}/test_file1 ${sandbox}/foo
+    ./cm add ${sandbox}/test_file2 ${sandbox}/foo/bar
+    ./cm add ${sandbox}/test_file3 ${sandbox}/foo/bar/baz
+
+    check_correct_no_link_formula foo test_file1 &&
+    check_correct_no_link_formula foo/bar test_file2 &&
+    check_correct_no_link_formula foo/bar/baz test_file3 
+}
+
+test_add_nested_with_link() {
+    touch ${sandbox}/test_file1 ${sandbox}/test_file2 ${sandbox}/test_file3
+
+    ./cm add -l ${sandbox}/test_file1 ${sandbox}/foo
+    ./cm add -l ${sandbox}/test_file2 ${sandbox}/foo/bar
+    ./cm add -l ${sandbox}/test_file3 ${sandbox}/foo/bar/baz
+
+    check_correct_link_formula foo test_file1 &&
+    check_correct_link_formula foo/bar test_file2 &&
+    check_correct_link_formula foo/bar/baz test_file3 
+}
+
 main() {
     run test_add_with_no_link
     run test_add_file_that_does_not_exist 
     run test_add_missing_args
+    run test_add_with_link
+    run test_add_nested_with_no_link
+    run test_add_nested_with_link
 }
 
 $@

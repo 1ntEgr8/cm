@@ -27,6 +27,12 @@ is_formula() {
     [[ -d $dir && -e $dir/formula ]]
 }
 
+norm_path() {
+    local item="$1"
+    echo "$(cd $(dirname $item); pwd)/$(basename $item)"
+}
+
 export -f apply_link
 export -f apply_links_from_file
 export -f is_formula
+export -f norm_path

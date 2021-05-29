@@ -8,7 +8,7 @@ run() {
     export sandbox="$cmd.sandbox"
     
     # run test and report result
-    $cmd 2> "$cmd.log"
+    $cmd > "$cmd.log" 2>&1
     if [[ $? -eq 0 ]]; then
         echo "PASS $cmd"
         rm "$cmd.log"
@@ -27,7 +27,12 @@ run() {
 }
 
 main() {
+    source ./env
+    source ./util
     export -f run
+
+    rm -rf *.sandbox
+    rm -rf *.log
     
     ./test/add main
 }
