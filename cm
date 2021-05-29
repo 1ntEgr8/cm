@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e
+source ./util
 source ./env
 
 if [[ $# -eq 0 ]]; then

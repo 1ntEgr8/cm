@@ -55,7 +55,7 @@ rm_file() {
 rm_formula() {
     local formula="$1"
     
-    if [[ ! -d $formula || ! -e $formula/formula ]]; then
+    if ! is_formula "$formula"; then
         error "$formula is not a formula"
     fi
 

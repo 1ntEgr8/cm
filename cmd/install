@@ -19,12 +19,12 @@ install_formula() {
 
     for dir in $dirs; do
         install_formula $dir $dry_run 
+        make_links $dir $dry_run
     done
 }
 
 main() {
     local dry_run
-    local only_link
 
     # process flags
     for arg in $@; do
@@ -35,25 +35,18 @@ main() {
                 info "DRY RUN"
                 break
                 ;;
-            --link)
-                shift
-                only_link=true
-                break
-                ;;
             -*)
                 error "Invalid flag $arg"
                 ;;
         esac
     done
     
-    if [[ ! $only_link ]]; then
-      if [[ $# -eq 0 ]]; then
-          install_formula . $dry_run
-      else
-          for arg in $@; do
-              install_formula $arg $dry_run
-          done
-      fi
+    if [[ $# -eq 0 ]]; then
+        install_formula . $dry_run
+    else
+        for arg in $@; do
+            install_formula $arg $dry_run
+        done
     fi
 
     cat ./links | while read line; do

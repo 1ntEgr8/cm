@@ -1,0 +1,32 @@
+apply_link() {
+    for line in "$@"; do
+        symlink=$(echo "$line" | awk '{print $1}')
+        symlink=${symlink/#\~/$HOME}
+
+        filepath=$(echo "$line" | awk '{print $3}')
+
+        ln -svf "$filepath" "$symlink"
+    done
+}
+
+apply_links_from_file() {
+    local links_file_path="$1"
+    local dry_run="$2"
+    
+    if [[ $dry_run ]]; then
+        cat $links_file_path
+    else 
+        cat $links_file_path | while read line; do
+            apply_link "$line"            
+        done
+    fi
+}
+
+is_formula() {
+    local dir="$1"
+    [[ -d $dir && -e $dir/formula ]]
+}
+
+export -f apply_link
+export -f apply_links_from_file
+export -f is_formula
