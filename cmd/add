@@ -11,7 +11,7 @@ create_formula() {
     touch "$formula/formula"
     cp ./templates/formula_template "$formula/formula"
     chmod +x "$formula/formula"
-    info "created formula $formula_dir"
+    info "created formula $formula"
 }
 
 prompt_to_save_link() {
@@ -69,29 +69,31 @@ main() {
     local flag_link
 
     for arg in "$@"; do
-      case $1 in
-        -f|--formula)
-          shift
-          flag_formula=true
-          ;;
-        -l|--link)
-          shift
-          flag_link=true
-          ;;
-        *)
-          break
-          ;;
-      esac
+        case $1 in
+            -f|--formula)
+            shift
+            flag_formula=true
+            ;;
+            -l|--link)
+            shift
+            flag_link=true
+            ;;
+            *)
+            break
+            ;;
+        esac
     done
 
-    if [[ $# -lt 2 ]]; then
-        error "Insufficient number of args"
-    fi
-
     if [[ $flag_formula && ! $flag_link ]]; then
-      create_formula "$1"
+        if [[ $# -lt 1 ]]; then
+            error "Insufficient number of args"
+        fi
+        create_formula "$1"
     else
-      add_item_to_formula "$1" "$2" $flag_link
+        if [[ $# -lt 2 ]]; then
+            error "Insufficient number of args"
+        fi
+        add_item_to_formula "$1" "$2" $flag_link
     fi
 }
 

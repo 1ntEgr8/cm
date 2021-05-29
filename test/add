@@ -4,7 +4,7 @@ check_correct_no_link_formula() {
     local formula="$1"
     local item="$2"
 
-    [[  -e ${sandbox}/$formula/$(basename $item) && \
+    [[  (-z $item || -e ${sandbox}/$formula/$(basename $item)) && \
         -e ${sandbox}/$formula/formula && \
         ! -e ${sandbox}/$formula/links \
     ]]
@@ -89,6 +89,14 @@ test_add_nested_with_link() {
     check_correct_link_formula foo/bar/baz test_file3 
 }
 
+test_create_formula() {
+    ./cm add -f ${sandbox}/foo
+    ./cm add -f ${sandbox}/foo/bar
+
+    check_correct_no_link_formula foo &&
+    check_correct_no_link_formula foo/bar
+}
+
 main() {
     run test_add_with_no_link
     run test_add_file_that_does_not_exist 
@@ -96,6 +104,7 @@ main() {
     run test_add_with_link
     run test_add_nested_with_no_link
     run test_add_nested_with_link
+    run test_create_formula
 }
 
 $@
