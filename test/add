@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+test_add_with_no_link() {
+    touch ${sandbox}/test_file
+    echo "test_file" > ${sandbox}/test_file
+
+    ./cm add ${sandbox}/test_file ${sandbox}/foo
+    
+    [[  -e ${sandbox}/foo/test_file && \
+        -e ${sandbox}/foo/formula && \
+        ! -e ${sandbox}/foo/links \
+    ]]
+}
+
+main() {
+    test_add_with_no_link
+}
+
+$@

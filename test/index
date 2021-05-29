@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+main() {
+    mkdir sandbox
+    export sandbox=./sandbox
+    
+    if ! ./test/add "main" > /dev/null; then
+        echo "FAILED"
+    else
+        echo "PASS"
+    fi
+
+    rm -rf sandbox
+}
+
+main

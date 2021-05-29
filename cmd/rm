@@ -56,16 +56,18 @@ rm_formula() {
     local formula="$1"
     
     if ! is_formula "$formula"; then
-        error "$formula is not a formula"
-    fi
+        info "$formula is not a formula; skipping"
 
-    items=$(ls -A $formula)
-    for item in $items; do
-        dispatch $formula/$item
-    done
-    
-    rm -r $formula
-    info "removed $formula"
+        # TODO insert a check to see if it is symlinked
+    else
+        items=$(ls -A $formula)
+        for item in $items; do
+            dispatch $formula/$item
+        done
+        
+        rm -r $formula
+        info "removed $formula"
+    fi
 }
 
 dispatch() {
