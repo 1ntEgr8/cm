@@ -35,6 +35,7 @@ main() {
     rm -rf *.log
     
     ./test/add main
+    ./test/rm main
 }
 
 main

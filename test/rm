@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+test_rm_no_link() {
+    touch ${sandbox}/test_file1
+    touch ${sandbox}/test_file2
+
+    ./cm add ${sandbox}/test_file1 ${sandbox}/foo
+    ./cm rm ${sandbox}/foo/test_file1
+    
+    if [[ -e ${sandbox}/foo/test_file1 ]]; then
+        return 1
+    fi
+
+    ./cm add ${sandbox}/test_file2 ${sandbox}/foo
+    ./cm rm ${sandbox}/foo
+    
+    [[  ! -e ${sandbox}/foo/test_file2 && \
+        ! -e ${sandbox}/foo/formula && \
+        ! -e ${sandbox}/foo \
+    ]]
+}
+
+main() {
+    run test_rm_no_link
+}
+
+$@
