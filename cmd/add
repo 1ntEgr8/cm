@@ -16,13 +16,15 @@ create_formula() {
 
 prompt_to_save_link() {
     local formula="$1"
-    local item=$(basename "$2")
+    local item
+    item=$(basename "$2")
     local links_path=$formula/links
+
     if [[ ! -e $links_path ]]; then
-      touch $links_path
+      touch "$links_path"
     fi
-    echo "FIXME: path/to/symlink -> $formula/$item" >> $links_path
-    vim $links_path
+    echo "FIXME: path/to/symlink -> $formula/$item" >> "$links_path"
+    vim "$links_path"
 }
 
 save_link_to_file() {
@@ -32,7 +34,7 @@ save_link_to_file() {
     
     local line="~${source/$HOME} -> $target"
     info "added '$line' to '$file'"
-    echo $line >> $file
+    echo "$line" >> "$file"
 }
 
 add_item_to_formula() {
@@ -57,10 +59,10 @@ add_item_to_formula() {
       if [[ -d "$item" ]]; then
           rm -rf "$item"
       fi
-      ln -svf "$formula/$(basename $item)" "$item"
+      ln -svf "$formula/$(basename "$item")" "$item"
 
       # prompt_to_save_link "$formula" "$item"
-      save_link_to_file "$item" "$formula/$(basename $item)" "$formula/links"
+      save_link_to_file "$item" "$formula/$(basename "$item")" "$formula/links"
     fi
       
     success
@@ -71,7 +73,7 @@ main() {
     local flag_formula
     local flag_link
 
-    for arg in "$@"; do
+    while [[ $# -ne 0 ]]; do
         case $1 in
             -f|--formula)
             shift
@@ -100,4 +102,4 @@ main() {
     fi
 }
 
-$@
+"$@"
