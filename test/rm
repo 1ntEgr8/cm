@@ -1,37 +1,38 @@
 #!/usr/bin/env bash
 
 test_rm_no_link() {
-    touch ${sandbox}/test_file1
-    touch ${sandbox}/test_file2
+    # shellcheck disable=SC2154
+    touch "${sandbox}/test_file1"
+    touch "${sandbox}/test_file2"
 
-    ./cm add ${sandbox}/test_file1 ${sandbox}/foo
-    ./cm rm ${sandbox}/foo/test_file1
+    ./cm add "${sandbox}/test_file1" "${sandbox}/foo"
+    ./cm rm "${sandbox}/foo/test_file1"
     
-    if [[ -e ${sandbox}/foo/test_file1 ]]; then
+    if [[ -e "${sandbox}/foo/test_file1" ]]; then
         return 1
     fi
 
-    ./cm add ${sandbox}/test_file2 ${sandbox}/foo
-    ./cm rm ${sandbox}/foo
+    ./cm add "${sandbox}/test_file2" "${sandbox}/foo"
+    ./cm rm "${sandbox}/foo"
     
-    [[  ! -e ${sandbox}/foo/test_file2 && \
-        ! -e ${sandbox}/foo/formula && \
-        ! -e ${sandbox}/foo \
+    [[  ! -e "${sandbox}/foo/test_file2" && \
+        ! -e "${sandbox}/foo/formula" && \
+        ! -e "${sandbox}/foo" \
     ]]
 }
 
 test_rm_link() {
-    touch ${sandbox}/test_file1
-    touch ${sandbox}/test_file2
+    touch "${sandbox}/test_file1"
+    touch "${sandbox}/test_file2"
 
-    ./cm add -l ${sandbox}/test_file1 ${sandbox}/foo
-    echo "y" | ./cm rm ${sandbox}/foo/test_file1
+    ./cm add -l "${sandbox}/test_file1" "${sandbox}/foo"
+    echo "y" | ./cm rm "${sandbox}/foo/test_file1"
 
-    if [[ -e ${sandbox}/foo/test_file1 ]]; then
+    if [[ -e "${sandbox}/foo/test_file1" ]]; then
         return 1
     fi
 
-    if [[ ! -e ${sandbox}/test_file1 ]]; then
+    if [[ ! -e "${sandbox}/test_file1" ]]; then
         return 1
     fi
 }
@@ -41,4 +42,4 @@ main() {
     run test_rm_link
 }
 
-$@
+"$@"
