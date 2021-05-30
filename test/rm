@@ -20,8 +20,25 @@ test_rm_no_link() {
     ]]
 }
 
+test_rm_link() {
+    touch ${sandbox}/test_file1
+    touch ${sandbox}/test_file2
+
+    ./cm add -l ${sandbox}/test_file1 ${sandbox}/foo
+    echo "y" | ./cm rm ${sandbox}/foo/test_file1
+
+    if [[ -e ${sandbox}/foo/test_file1 ]]; then
+        return 1
+    fi
+
+    if [[ ! -e ${sandbox}/test_file1 ]]; then
+        return 1
+    fi
+}
+
 main() {
     run test_rm_no_link
+    run test_rm_link
 }
 
 $@

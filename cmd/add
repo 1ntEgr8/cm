@@ -26,13 +26,13 @@ prompt_to_save_link() {
 }
 
 save_link_to_file() {
-  local source="$1"
-  local target="$2"
-  local file="$3"
-  
-  local line="~${source/$HOME} -> $target"
-  info "added '$line' to '$file'"
-  echo $line >> $file
+    local source="$1"
+    local target="$2"
+    local file="$3"
+    
+    local line="~${source/$HOME} -> $target"
+    info "added '$line' to '$file'"
+    echo $line >> $file
 }
 
 add_item_to_formula() {
@@ -54,7 +54,10 @@ add_item_to_formula() {
 
     if [[ "$flag_link" ]]; then
       info "creating a symlink"
-      ln -sf "$formula/$(basename $item)" "$item"
+      if [[ -d "$item" ]]; then
+          rm -rf "$item"
+      fi
+      ln -svf "$formula/$(basename $item)" "$item"
 
       # prompt_to_save_link "$formula" "$item"
       save_link_to_file "$item" "$formula/$(basename $item)" "$formula/links"

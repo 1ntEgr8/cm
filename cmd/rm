@@ -43,8 +43,8 @@ rm_file() {
                 fi
             fi
 
-            # remove line from ./links
-            sed -i '' "/$filename/d" ./links
+            # remove line from $links_path
+            sed -i '' "/$filename/d" $links_path
         fi
     fi
 

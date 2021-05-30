@@ -97,6 +97,15 @@ test_create_formula() {
     check_correct_no_link_formula foo/bar
 }
 
+test_add_link_dir() {
+    mkdir ${sandbox}/test_dir
+    touch ${sandbox}/test_dir/test_file1 ${sandbox}/test_dir/test_file2
+
+    ./cm add -l ${sandbox}/test_dir ${sandbox}/foo
+
+    check_correct_link_formula foo test_dir
+}
+
 main() {
     run test_add_with_no_link
     run test_add_file_that_does_not_exist 
@@ -105,6 +114,7 @@ main() {
     run test_add_nested_with_no_link
     run test_add_nested_with_link
     run test_create_formula
+    run test_add_link_dir
 }
 
 $@
