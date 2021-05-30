@@ -2,88 +2,85 @@
 
 set -e
 
-rm_file() {
-    filepath="$1"
-    filename=$(basename "$filepath")
-    
-    # check if file exists
-    if [[ ! -e $filepath ]]; then
-        error "File $filepath does not exist"
-    fi
+handle_linked() {
+    local item="$1"
+    local item_dir
+    item_dir=$(dirname "$item")
+    local links_path="$item_dir"/links
 
-    # check if it is a file (and not a dir)
-    if [[ ! -f $filepath ]]; then
-        error "$filepath is not a file"
-    fi
+    echo "$item"
     
-    links_path=$(dirname "$filepath")/links
-    if [[ ! -e $links_path ]]; then
-        info "no 'links' file found"
-        info "skipping symlink check"
-    else
-        if out=$(grep -F "$filename" "$links_path"); then
-            # warn about link
+    if [[ -e "$links_path" ]]; then
+        if out=$(grep -F "$item" "$links_path"); then
+            # grab symlink from file
+            # file format: source -> target
             symlink=$(echo "$out" | awk '{print $1}')
 
             # replace ~ with $HOME
             symlink=${symlink/#\~/$HOME}
-            
-            if [[ -L "$symlink" ]]; then
-                warn "$symlink is symlinked to $filepath"
-                warn "Removing '$filepath' will result in a broken symlink '$symlink'"
 
-                if yes_or_no "Do you want to keep a copy of '$filepath' at '$symlink'?"
+            if [[ -L "$symlink" ]]; then
+                warn "'$symlink' is symlinked to '$item'"
+                warn "Removing '$item' will result in a broken symlink '$symlink'"
+                if yes_or_no "Do you want to keep a copy of '$item' at '$symlink'?"
                 then
                     unlink "$symlink"
-                    cp "$filepath" "$symlink"
-                    info "created copy"
+                    cp -r "$item" "$symlink"
+                    info "Created a copy of '$item' at '$symlink'"
                 else
                     unlink "$symlink"
-                    rm "$filepath"
-                    info "removed $filepath and $symlink"
                 fi
+            else
+                warn "'$symlink' is not a symlink"
             fi
-
+            
             # remove line from $links_path
-            sed -i '' "/$filename/d" "$links_path"
+            sed -i '' "/$item/d" "$links_path"
+
+            # remove item
+            rm -r "$item"
+
+            return 0
         fi
     fi
 
-    rm "$filepath"
-    info "removed $filepath"
+    return 1
 }
 
-rm_formula() {
-    local formula="$1"
+rm_item() {
+    local item="$1"
     
-    if ! is_formula "$formula"; then
-        info "$formula is not a formula; skipping"
-
-        # TODO insert a check to see if it is symlinked
-    else
-        items=$(ls -A "$formula")
-        for item in $items; do
-            dispatch "$formula/$item"
+    handle_linked "$item" ||
+    if [[ -d "$item" ]]; then
+        for subitem in $(ls -A "$item"); do
+            if [[   ! "$subitem" = "links" && \
+                    ! "$subitem" = "formula" \
+                ]]
+            then
+                rm_item "$item/$subitem"
+            fi
         done
-        
-        rm -d "$formula"
-        info "removed $formula"
-    fi
-}
-
-dispatch() {
-    if [[ -d "$1" ]]; then
-        rm_formula "$1"
+        if is_formula "$item"; then
+            if [[ -e "$item/links" ]]; then
+                rm "$item/links"
+            fi
+            rm "$item/formula"
+        fi
+        rm -d "$item"
     else
-        rm_file "$1"
+        rm "$item"
     fi
 }
 
 main() {
     for arg in "$@"; do
-        dispatch "$arg"
+        if [[ -e "$arg" ]]; then
+            info "Removing '$arg'"
+            rm_item "$arg"
+        else
+            warn "'$arg' does not exist"
+        fi
     done
-    success
 }
 
 "$@"

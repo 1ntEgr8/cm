@@ -37,7 +37,6 @@ test_rm_link() {
     fi
 }
 
-# TODO test rm with linked directories
 test_rm_link_dir() {
     mkdir "$sandbox/test_dir"
     mkdir "$sandbox/test_dir/test_dir_nested"

@@ -66,8 +66,6 @@ add_item_to_formula() {
       # prompt_to_save_link "$formula" "$item"
       save_link_to_file "$item" "$formula/$(basename "$item")" "$formula/links"
     fi
-      
-    success
 }
 
 

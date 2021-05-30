@@ -60,8 +60,6 @@ main() {
             install_formula "$arg" $dry_run
         done
     fi
-    
-    success
 }
 
 "$@"
