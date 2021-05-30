@@ -14,5 +14,5 @@ if [[ ! -e "cmd/$cmd" ]]; then
     cmd/help "main" "index"
 else
     shift
-    cmd/$cmd "main" $@
+    cmd/"$cmd" "main" "$@"
 fi

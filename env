@@ -1,27 +1,29 @@
+#!/usr/bin/env bash
+
 export bin_install=""
 export app_install=""
 
 info() {
-    echo "[info]" $@ 1>&2
+    echo "[info] $*" 1>&2
 }
 
 warn() {
-    echo "[warn]" $@ 1>&2
+    echo "[warn] $*" 1>&2
 }
 
 success() {
-    echo "[success]" $@ 1>&2
+    echo "[success] $*" 1>&2
 }
 
 error() {
-    echo "[error]" $@ 1>&2
+    echo "[error] $*" 1>&2
     exit 1
 }
 
 # https://stackoverflow.com/questions/29436275/how-to-prompt-for-yes-or-no-in-bash
 yes_or_no() {
     while true; do
-        read -p "$* [y/n]: " yn
+        read -rp "$* [y/n]: " yn
         case $yn in
             [Yy]*) 
                 return 0
