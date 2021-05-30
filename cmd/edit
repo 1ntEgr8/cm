@@ -9,7 +9,7 @@ main() {
         error "formula doesn't exist"
     fi
 
-    vim $1/formula
+    vim "$1/formula"
 }
 
-$@
+"$@"

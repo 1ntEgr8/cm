@@ -4,7 +4,7 @@ install_formula() {
     local formula="$1"
     local dry_run="$2"
 
-    if [[ -e $formula/formula ]]; then
+    if [[ -e "$formula/formula" ]]; then
         if [[ $dry_run ]]; then
             echo "$formula/formula"
         else
@@ -15,11 +15,11 @@ install_formula() {
         fi
     fi
 
-    dirs=$(find $formula/* -type d -depth 0)
+    dirs=$(find "$formula/*" -type d -depth 0)
 
     for dir in $dirs; do
-        install_formula $dir $dry_run 
-        make_links $dir $dry_run
+        install_formula "$dir" "$dry_run"
+        make_links "$dir" "$dry_run"
     done
 }
 
@@ -27,7 +27,7 @@ main() {
     local dry_run
 
     # process flags
-    for arg in $@; do
+    for arg in "$@"; do
         case $arg in
             --dry-run)
                 shift
@@ -44,21 +44,21 @@ main() {
     if [[ $# -eq 0 ]]; then
         install_formula . $dry_run
     else
-        for arg in $@; do
-            install_formula $arg $dry_run
+        for arg in "$@"; do
+            install_formula "$arg" $dry_run
         done
     fi
 
-    cat ./links | while read line; do
+    while read -r line; do
         symlink=$(echo "$line" | awk '{print $1}')
         symlink=${symlink/#\~/$HOME}
 
         filepath=$(echo "$line" | awk '{print $3}')
 
         ln -svf "$filepath" "$symlink"
-    done
+    done < ./links
 
     success
 }
 
-$@
+"$@"
