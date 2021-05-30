@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 install_formula() {
     local formula="$1"
     local dry_run="$2"

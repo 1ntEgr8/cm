@@ -37,9 +37,33 @@ test_rm_link() {
     fi
 }
 
+# TODO test rm with linked directories
+test_rm_link_dir() {
+    mkdir "$sandbox/test_dir"
+    mkdir "$sandbox/test_dir/test_dir_nested"
+
+    touch "$sandbox/test_dir/test_file1"
+    touch "$sandbox/test_dir/test_file2"
+    touch "$sandbox/test_dir/test_dir_nested/test_file3"
+    touch "$sandbox/test_dir/test_dir_nested/test_file4"
+
+    ./cm add -l "$sandbox/test_dir" "$sandbox/foo"
+    echo "y" | ./cm rm "$sandbox/foo"
+
+    [[  -d "$sandbox/test_dir" && \
+        -d "$sandbox/test_dir/test_dir_nested" && \
+        -f "$sandbox/test_dir/test_file1" && \
+        -f "$sandbox/test_dir/test_file2" && \
+        -f "$sandbox/test_dir/test_dir_nested/test_file3" && \
+        -f "$sandbox/test_dir/test_dir_nested/test_file4" && \
+        ! -e "$sandbox/foo" \
+    ]]
+}
+
 main() {
     run test_rm_no_link
     run test_rm_link
+    run test_rm_link_dir
 }
 
 "$@"

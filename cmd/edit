@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 main() {
     if [[ $# -eq 0 ]]; then
         error "missing formula name"

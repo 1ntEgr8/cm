@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 rm_file() {
     filepath="$1"
     filename=$(basename "$filepath")
@@ -64,7 +66,7 @@ rm_formula() {
             dispatch "$formula/$item"
         done
         
-        rm -r "$formula"
+        rm -d "$formula"
         info "removed $formula"
     fi
 }
