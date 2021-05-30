@@ -32,9 +32,112 @@ EOF
     diff -w "$sandbox/actual.log" "$sandbox/expected.log"
 }
 
+test_install_no_formula_nested() {
+    mkdir -p "$sandbox/foo/a"
+    mkdir -p "$sandbox/foo/b"
+    mkdir -p "$sandbox/bar"
+    mkdir -p "$sandbox/baz/c/d"
+
+    cat << EOF > "$sandbox/expected.log"
+[info] DRY RUN
+[info] Processing '$sandbox/bar'
+[done]
+[info] Processing '$sandbox/baz/c/d'
+[done]
+[info] Processing '$sandbox/baz/c'
+[done]
+[info] Processing '$sandbox/baz'
+[done]
+[info] Processing '$sandbox/foo/a'
+[done]
+[info] Processing '$sandbox/foo/b'
+[done]
+[info] Processing '$sandbox/foo'
+[done]
+[info] Processing '$sandbox'
+[done]
+[success]
+EOF
+    
+    ./cm install --dry-run "$sandbox" > "$sandbox/actual.log" 2>&1
+
+    diff -w "$sandbox/actual.log" "$sandbox/expected.log"
+}
+
+test_install_formula_nested() {
+    ./cm add -f "$sandbox/foo"
+    ./cm add -f "$sandbox/foo/a"
+    ./cm add -f "$sandbox/foo/b"
+    ./cm add -f "$sandbox/bar"
+    ./cm add -f "$sandbox/baz"
+    ./cm add -f "$sandbox/baz/c"
+    ./cm add -f "$sandbox/baz/c/d"
+
+    cat << EOF > "$sandbox/expected.log"
+[info] Processing '$sandbox/bar'
+[info] Installing '$sandbox/bar/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/bar/formula'
+[info] FIXME: configuring
+[info] '$sandbox/bar/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox/baz/c/d'
+[info] Installing '$sandbox/baz/c/d/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/baz/c/d/formula'
+[info] FIXME: configuring
+[info] '$sandbox/baz/c/d/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox/baz/c'
+[info] Installing '$sandbox/baz/c/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/baz/c/formula'
+[info] FIXME: configuring
+[info] '$sandbox/baz/c/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox/baz'
+[info] Installing '$sandbox/baz/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/baz/formula'
+[info] FIXME: configuring
+[info] '$sandbox/baz/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox/foo/a'
+[info] Installing '$sandbox/foo/a/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/foo/a/formula'
+[info] FIXME: configuring
+[info] '$sandbox/foo/a/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox/foo/b'
+[info] Installing '$sandbox/foo/b/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/foo/b/formula'
+[info] FIXME: configuring
+[info] '$sandbox/foo/b/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox/foo'
+[info] Installing '$sandbox/foo/formula'
+[info] FIXME: installing
+[info] Configuring '$sandbox/foo/formula'
+[info] FIXME: configuring
+[info] '$sandbox/foo/links' does not exist; skipping apply links
+[done]
+[info] Processing '$sandbox'
+[done]
+[success]
+EOF
+    
+    ./cm install "$sandbox" > "$sandbox/actual.log" 2>&1
+
+    diff -w "$sandbox/actual.log" "$sandbox/expected.log"
+}
+
 main() {
     run test_install_empty
     run test_install_no_formula
+    run test_install_no_formula_nested
+    run test_install_formula_nested
 }
 
 "$@"

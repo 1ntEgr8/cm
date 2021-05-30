@@ -11,7 +11,7 @@ create_formula() {
     touch "$formula/formula"
     cp ./templates/formula_template "$formula/formula"
     chmod +x "$formula/formula"
-    info "created formula $formula"
+    info "Created formula $formula"
 }
 
 prompt_to_save_link() {
