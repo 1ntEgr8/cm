@@ -33,8 +33,8 @@ main() {
     rm -rf ./*.sandbox
     rm -rf ./*.log
     
-    ./test/add main
-    ./test/rm main
+    local cmd="$1"
+    ./test/"$cmd" main
 }
 
-main
+main "$@"

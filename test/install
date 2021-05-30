@@ -1,1 +1,40 @@
 #!/usr/bin/env bash
+
+test_install_empty() {
+    cat << EOF > "$sandbox/expected.log"
+[info] DRY RUN
+[info] Processing '$sandbox'
+[done]
+[success]
+EOF
+
+    ./cm install --dry-run "$sandbox" > "$sandbox/actual.log" 2>&1
+    
+    diff -w "$sandbox/actual.log" "$sandbox/expected.log"
+}
+
+test_install_no_formula() {
+    mkdir "$sandbox/foo"
+    touch "$sandbox/test_file1"
+    touch "$sandbox/foo/test_file2"
+
+    cat << EOF > "$sandbox/expected.log" 
+[info] DRY RUN
+[info] Processing '$sandbox/foo'
+[done]
+[info] Processing '$sandbox'
+[done]
+[success]
+EOF
+
+    ./cm install --dry-run "$sandbox" > "$sandbox/actual.log" 2>&1
+
+    diff -w "$sandbox/actual.log" "$sandbox/expected.log"
+}
+
+main() {
+    run test_install_empty
+    run test_install_no_formula
+}
+
+"$@"

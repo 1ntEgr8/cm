@@ -3,6 +3,15 @@
 install_formula() {
     local formula="$1"
     local dry_run="$2"
+    
+    dirs=$(find "$formula" -type d -depth 1)
+
+    for dir in $dirs; do
+        install_formula "$dir" "$dry_run"
+    done
+
+
+    info "Processing '$formula'"
 
     if [[ -e "$formula/formula" ]]; then
         if [[ $dry_run ]]; then
@@ -12,15 +21,16 @@ install_formula() {
             "$formula/formula" install
             info "Configuring $formula/formula"
             "$formula/formula" configure
+
+            if [[ -f "$dir/links" ]]; then
+                apply_links_from_file "$dir/links" "$dry_run"
+            else
+                info "'$dir/links' does not exist; skipping apply links"
+            fi
         fi
     fi
-
-    dirs=$(find "$formula/*" -type d -depth 0)
-
-    for dir in $dirs; do
-        install_formula "$dir" "$dry_run"
-        make_links "$dir" "$dry_run"
-    done
+    
+    checkpoint
 }
 
 main() {
@@ -36,7 +46,7 @@ main() {
                 break
                 ;;
             -*)
-                error "Invalid flag $arg"
+                error "Invalid flag: $arg"
                 ;;
         esac
     done
@@ -48,16 +58,7 @@ main() {
             install_formula "$arg" $dry_run
         done
     fi
-
-    while read -r line; do
-        symlink=$(echo "$line" | awk '{print $1}')
-        symlink=${symlink/#\~/$HOME}
-
-        filepath=$(echo "$line" | awk '{print $3}')
-
-        ln -svf "$filepath" "$symlink"
-    done < ./links
-
+    
     success
 }
 

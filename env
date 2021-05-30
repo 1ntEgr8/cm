@@ -20,6 +20,10 @@ error() {
     exit 1
 }
 
+checkpoint() {
+    echo "[done]" 1>&2
+}
+
 # https://stackoverflow.com/questions/29436275/how-to-prompt-for-yes-or-no-in-bash
 yes_or_no() {
     while true; do
@@ -39,4 +43,5 @@ export -f info
 export -f warn
 export -f success
 export -f error
+export -f checkpoint
 export -f yes_or_no
