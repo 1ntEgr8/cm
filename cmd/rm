@@ -2,7 +2,7 @@
 
 rm_file() {
     filepath="$1"
-    filename=$(basename $filepath)
+    filename=$(basename "$filepath")
     
     # check if file exists
     if [[ ! -e $filepath ]]; then
@@ -14,13 +14,12 @@ rm_file() {
         error "$filepath is not a file"
     fi
     
-    links_path=$(dirname $filepath)/links
+    links_path=$(dirname "$filepath")/links
     if [[ ! -e $links_path ]]; then
         info "no 'links' file found"
         info "skipping symlink check"
     else
-        out=$(grep -F "$filename" $links_path)
-        if [[ $? -eq 0 ]]; then
+        if out=$(grep -F "$filename" "$links_path"); then
             # warn about link
             symlink=$(echo "$out" | awk '{print $1}')
 
@@ -30,25 +29,25 @@ rm_file() {
             if [[ -L "$symlink" ]]; then
                 warn "$symlink is symlinked to $filepath"
                 warn "Removing '$filepath' will result in a broken symlink '$symlink'"
-                yes_or_no "Do you want to keep a copy of '$filepath' at '$symlink'?"
 
-                if [[ $? -eq 0 ]]; then
-                    unlink $symlink
-                    cp $filepath $symlink
+                if yes_or_no "Do you want to keep a copy of '$filepath' at '$symlink'?"
+                then
+                    unlink "$symlink"
+                    cp "$filepath" "$symlink"
                     info "created copy"
                 else
-                    unlink $symlink
-                    rm $filepath
+                    unlink "$symlink"
+                    rm "$filepath"
                     info "removed $filepath and $symlink"
                 fi
             fi
 
             # remove line from $links_path
-            sed -i '' "/$filename/d" $links_path
+            sed -i '' "/$filename/d" "$links_path"
         fi
     fi
 
-    rm $filepath
+    rm "$filepath"
     info "removed $filepath"
 }
 
@@ -60,12 +59,12 @@ rm_formula() {
 
         # TODO insert a check to see if it is symlinked
     else
-        items=$(ls -A $formula)
+        items=$(ls -A "$formula")
         for item in $items; do
-            dispatch $formula/$item
+            dispatch "$formula/$item"
         done
         
-        rm -r $formula
+        rm -r "$formula"
         info "removed $formula"
     fi
 }
@@ -79,10 +78,10 @@ dispatch() {
 }
 
 main() {
-    for arg in $@; do
-        dispatch $arg
+    for arg in "$@"; do
+        dispatch "$arg"
     done
     success
 }
 
-$@
+"$@"
