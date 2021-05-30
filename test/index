@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 
 run() {
-    local cmd=$@
+    local cmd=$*
     
     # make sandbox
     mkdir -p "$cmd.sandbox"
     export sandbox="$cmd.sandbox"
     
     # run test and report result
-    $cmd > "$cmd.log" 2>&1
-    if [[ $? -eq 0 ]]; then
+    if $cmd > "$cmd.log" 2>&1; then
         echo "PASS $cmd"
         rm "$cmd.log"
-        rm -rf ${sandbox}
+        rm -rf "${sandbox}"
     else
         echo "FAIL $cmd"
         echo ">>>>>>>>"
@@ -31,8 +30,8 @@ main() {
     source ./util
     export -f run
 
-    rm -rf *.sandbox
-    rm -rf *.log
+    rm -rf ./*.sandbox
+    rm -rf ./*.log
     
     ./test/add main
     ./test/rm main
