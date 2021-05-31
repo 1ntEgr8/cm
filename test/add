@@ -104,7 +104,20 @@ test_add_link_dir() {
 
     ./cm add -l "${sandbox}/test_dir" "${sandbox}/foo"
 
-    check_correct_link_formula foo test_dir
+    abs_path_to_file=$(norm_path "${sandbox}/test_dir")
+    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/foo"
+    
+    grep -Fq "$link_line" "${sandbox}/foo/links"
+    search_status=$?
+
+    [[  -e "${sandbox}/foo/test_file1" && \
+        -e "${sandbox}/foo/test_file2" && \
+        -e "${sandbox}/foo/formula" && \
+        -e "${sandbox}/foo/links" && \
+        -L "${sandbox}/test_dir" && \
+        $search_status -eq 0
+    ]]
+
 }
 
 main() {

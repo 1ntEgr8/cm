@@ -42,16 +42,24 @@ add_item_to_formula() {
             create_formula "$formula"
         fi
         
-        cp -R "$item" "$formula"
+        if [[ -d "$item" ]]; then
+            cp -r "$item"/* "$formula"
+        else
+            cp "$item" "$formula"
+        fi
 
         if [[ "$flag_link" = true ]]; then
+            local source 
             if [[ -d "$item" ]]; then
+                source="$formula"
                 rm -rf "$item"
+            else
+                source="$formula/$(basename "$item")"
             fi
-            out=$(ln -svf "$formula/$(basename "$item")" "$item")
+                        
+            out=$(ln -svf "$source" "$item")
             info "Created symlink: $out"
-
-            save_link_to_file "$item" "$formula/$(basename "$item")" "$formula/links"
+            save_link_to_file "$item" "$source" "$formula/links"
         fi
 
         info "Added $item to $formula"
