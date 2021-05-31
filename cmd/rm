@@ -9,7 +9,7 @@ handle_linked() {
     local links_path="$item_dir"/links
 
     if [[ -e "$links_path" ]]; then
-        if out=$(grep -F "$item" "$links_path"); then
+        if out=$(grep -F "$(basename $item)" "$links_path"); then
             # grab symlink from file
             # file format: source -> target
             symlink=$(echo "$out" | awk '{print $1}')
@@ -47,6 +47,7 @@ handle_linked() {
 
 rm_item() {
     local item="$1"
+    item="$(norm_path $item)"
     
     handle_linked "$item" ||
     if [[ -d "$item" ]]; then

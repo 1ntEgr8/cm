@@ -26,15 +26,20 @@ run() {
 }
 
 main() {
-    source ./env
-    source ./util
+    local test_base
+    test_base="$(dirname $0)"
+    local base
+    base="$(dirname $test_base)"
+    local cmd="$1"
+
+    source "$base/env"
+    source "$base/util"
     export -f run
 
-    rm -rf ./*.sandbox
-    rm -rf ./*.log
+    rm -rf "$base/*.sandbox"
+    rm -rf "$base/*.log"
     
-    local cmd="$1"
-    ./test/"$cmd" main
+    "$test_base/$cmd" main
 }
 
 main "$@"

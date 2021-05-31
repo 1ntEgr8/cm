@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 
 set -e
-source ./util
-source ./env
+
+export base="$(dirname $0)"
+cmd="$1"
+
+source "$base/util"
+source "$base/env"
 
 if [[ $# -eq 0 ]]; then
     help_text
 fi
 
-cmd="$1"
-if [[ ! -e "cmd/$cmd" ]]; then
+if [[ ! -e "$base/cmd/$cmd" ]]; then
     warn "The command $cmd doesn't exist. See help text below for a list of supported commands"
-    cmd/help "main" "index"
+    "$base/cmd/help" "main" "index"
 else
     shift
-    cmd/"$cmd" "main" "$@"
+    "$base/cmd/$cmd" "main" "$@"
 fi
