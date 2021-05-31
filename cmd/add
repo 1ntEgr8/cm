@@ -16,19 +16,6 @@ create_formula() {
     info "Created formula $formula"
 }
 
-prompt_to_save_link() {
-    local formula="$1"
-    local item
-    item=$(basename "$2")
-    local links_path=$formula/links
-
-    if [[ ! -e $links_path ]]; then
-      touch "$links_path"
-    fi
-    echo "FIXME: path/to/symlink -> $formula/$item" >> "$links_path"
-    vim "$links_path"
-}
-
 save_link_to_file() {
     local source="$1"
     local target="$2"
@@ -40,32 +27,35 @@ save_link_to_file() {
 }
 
 add_item_to_formula() {
-    item=$(norm_path "$1")
-    formula="$2"
-    flag_link="$3"
-
-    if [[ ! -e $item ]]; then
-        error "'$item' does not exist" 
-    fi
+    local flag_link="$1"
+    local args=("$@")
+    local formula=${args[${#args[@]}-1]}
     
-    if [[ ! -e "$formula/formula" ]]; then
-      create_formula "$formula"
-    fi
-    
-    cp -R "$item" "$formula"
+    for i in $(seq 1 $((${#args[@]}-2))); do
+        local item=$(norm_path ${args[$i]})
 
-    if [[ "$flag_link" = true ]]; then
-      if [[ -d "$item" ]]; then
-          rm -rf "$item"
-      fi
-      out=$(ln -svf "$formula/$(basename "$item")" "$item")
-      info "Created symlink: $out"
+        if [[ ! -e $item ]]; then
+            error "'$item' does not exist" 
+        fi
+        
+        if [[ ! -e "$formula/formula" ]]; then
+            create_formula "$formula"
+        fi
+        
+        cp -R "$item" "$formula"
 
-      # prompt_to_save_link "$formula" "$item"
-      save_link_to_file "$item" "$formula/$(basename "$item")" "$formula/links"
-    fi
+        if [[ "$flag_link" = true ]]; then
+            if [[ -d "$item" ]]; then
+                rm -rf "$item"
+            fi
+            out=$(ln -svf "$formula/$(basename "$item")" "$item")
+            info "Created symlink: $out"
 
-    info "Added $item to $formula"
+            save_link_to_file "$item" "$formula/$(basename "$item")" "$formula/links"
+        fi
+
+        info "Added $item to $formula"
+    done
 }
 
 
@@ -98,7 +88,7 @@ main() {
         if [[ $# -lt 2 ]]; then
             error "Insufficient number of args"
         fi
-        add_item_to_formula "$1" "$2" $flag_link
+        add_item_to_formula $flag_link "$@"
     fi
 }
 
