@@ -5,24 +5,26 @@ set -e
 install_formula() {
     local formula="$1"
     local dry_run="$2"
+    local verbose="$3"
     local dirs 
     dirs=$(find -s "$formula" -type d -depth 1)
-
+    
     for dir in $dirs; do
-        install_formula "$dir" "$dry_run"
+        install_formula "$dir" "$dry_run" "$verbose"
     done
 
-
-    info "Processing '$formula'"
-
+    if [[ $verbose = true ]]; then
+        info "Processing '$formula'"
+    fi
+    
     if [[ -e "$formula/formula" ]]; then
-        if [[ $dry_run ]]; then
+        if [[ $dry_run = true ]]; then
             echo "$formula/formula"
         else
-            info "Installing '$formula/formula'"
             "$formula/formula" install
-            info "Configuring '$formula/formula'"
+            info "Installed '$formula/formula'"
             "$formula/formula" configure
+            info "Configured '$formula/formula'"
 
             if [[ -f "$formula/links" ]]; then
                 apply_links_from_file "$formula/links" "$dry_run"
@@ -32,11 +34,14 @@ install_formula() {
         fi
     fi
     
-    checkpoint
+    if [[ $verbose = true ]]; then
+        checkpoint
+    fi
 }
 
 main() {
-    local dry_run
+    local dry_run=false
+    local verbose=false
 
     # process flags
     for arg in "$@"; do
@@ -45,19 +50,25 @@ main() {
                 shift
                 dry_run=true
                 info "DRY RUN"
-                break
                 ;;
+            -v|--verbose)
+                shift
+                verbose=true
+                ;; 
             -*)
                 error "Invalid flag: $arg"
                 ;;
+            *)
+                break
+                ;;
         esac
     done
-    
+
     if [[ $# -eq 0 ]]; then
-        install_formula . $dry_run
+        install_formula . $dry_run $verbose
     else
         for arg in "$@"; do
-            install_formula "$arg" $dry_run
+            install_formula "$arg" $dry_run $verbose
         done
     fi
 }

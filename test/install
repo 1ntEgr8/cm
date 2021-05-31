@@ -7,7 +7,7 @@ test_install_empty() {
 [done]
 EOF
 
-    ./cm install --dry-run "$sandbox" > "$sandbox/actual.log" 2>&1
+    ./cm install --dry-run -v "$sandbox" > "$sandbox/actual.log" 2>&1
     
     diff -w "$sandbox/actual.log" "$sandbox/expected.log"
 }
@@ -25,7 +25,7 @@ test_install_no_formula() {
 [done]
 EOF
 
-    ./cm install --dry-run "$sandbox" > "$sandbox/actual.log" 2>&1
+    ./cm install --dry-run -v "$sandbox" > "$sandbox/actual.log" 2>&1
 
     diff -w "$sandbox/actual.log" "$sandbox/expected.log"
 }
@@ -56,7 +56,7 @@ test_install_no_formula_nested() {
 [done]
 EOF
     
-    ./cm install --dry-run "$sandbox" > "$sandbox/actual.log" 2>&1
+    ./cm install --dry-run -v "$sandbox" > "$sandbox/actual.log" 2>&1
 
     diff -w "$sandbox/actual.log" "$sandbox/expected.log"
 }
@@ -72,59 +72,59 @@ test_install_formula_nested() {
 
     cat << EOF > "$sandbox/expected.log"
 [info] Processing '$sandbox/bar'
-[info] Installing '$sandbox/bar/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/bar/formula'
+[info] Installed '$sandbox/bar/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/bar/formula'
 [info] '$sandbox/bar/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/baz/c/d'
-[info] Installing '$sandbox/baz/c/d/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/baz/c/d/formula'
+[info] Installed '$sandbox/baz/c/d/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/baz/c/d/formula'
 [info] '$sandbox/baz/c/d/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/baz/c'
-[info] Installing '$sandbox/baz/c/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/baz/c/formula'
+[info] Installed '$sandbox/baz/c/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/baz/c/formula'
 [info] '$sandbox/baz/c/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/baz'
-[info] Installing '$sandbox/baz/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/baz/formula'
+[info] Installed '$sandbox/baz/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/baz/formula'
 [info] '$sandbox/baz/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/foo/a'
-[info] Installing '$sandbox/foo/a/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/foo/a/formula'
+[info] Installed '$sandbox/foo/a/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/foo/a/formula'
 [info] '$sandbox/foo/a/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/foo/b'
-[info] Installing '$sandbox/foo/b/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/foo/b/formula'
+[info] Installed '$sandbox/foo/b/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/foo/b/formula'
 [info] '$sandbox/foo/b/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/foo'
-[info] Installing '$sandbox/foo/formula'
 [info] FIXME: installing
-[info] Configuring '$sandbox/foo/formula'
+[info] Installed '$sandbox/foo/formula'
 [info] FIXME: configuring
+[info] Configured '$sandbox/foo/formula'
 [info] '$sandbox/foo/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox'
 [done]
 EOF
     
-    ./cm install "$sandbox" > "$sandbox/actual.log" 2>&1
+    ./cm install -v "$sandbox" > "$sandbox/actual.log" 2>&1
 
     diff -w "$sandbox/actual.log" "$sandbox/expected.log"
 }

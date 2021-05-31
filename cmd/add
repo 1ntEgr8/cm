@@ -35,7 +35,7 @@ save_link_to_file() {
     local file="$3"
     
     local line="~${source/$HOME} -> $target"
-    info "added '$line' to '$file'"
+    info "Added '$line' to '$file'"
     echo "$line" >> "$file"
 }
 
@@ -48,8 +48,6 @@ add_item_to_formula() {
         error "'$item' does not exist" 
     fi
     
-    info "adding $item to $formula"
-
     if [[ ! -e "$formula/formula" ]]; then
       create_formula "$formula"
     fi
@@ -57,15 +55,17 @@ add_item_to_formula() {
     cp -R "$item" "$formula"
 
     if [[ "$flag_link" ]]; then
-      info "creating a symlink"
       if [[ -d "$item" ]]; then
           rm -rf "$item"
       fi
-      ln -svf "$formula/$(basename "$item")" "$item"
+      out=$(ln -svf "$formula/$(basename "$item")" "$item")
+      info "Created symlink: $out"
 
       # prompt_to_save_link "$formula" "$item"
       save_link_to_file "$item" "$formula/$(basename "$item")" "$formula/links"
     fi
+
+    info "Added $item to $formula"
 }
 
 

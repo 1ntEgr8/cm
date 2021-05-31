@@ -8,8 +8,6 @@ handle_linked() {
     item_dir=$(dirname "$item")
     local links_path="$item_dir"/links
 
-    echo "$item"
-    
     if [[ -e "$links_path" ]]; then
         if out=$(grep -F "$item" "$links_path"); then
             # grab symlink from file
@@ -35,7 +33,7 @@ handle_linked() {
             fi
             
             # remove line from $links_path
-            sed -i '' "/$item/d" "$links_path"
+            sed -i '' "#$item#d" "$links_path"
 
             # remove item
             rm -r "$item"
@@ -70,15 +68,16 @@ rm_item() {
     else
         rm "$item"
     fi
+
+    info "Removed '$item'"
 }
 
 main() {
     for arg in "$@"; do
         if [[ -e "$arg" ]]; then
-            info "Removing '$arg'"
             rm_item "$arg"
         else
-            warn "'$arg' does not exist"
+            error "'$arg' does not exist"
         fi
     done
 }
