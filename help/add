@@ -4,11 +4,11 @@ USAGE:
     ./cm add --formula <formula-name>
         Creates a formula named <formula-name>
 
-    ./cm add [<file> ...] <formula-name>
-        Adds the specified files to <formula-name>. No symlinks created.
+    ./cm add [<path> ...] <formula-name>
+        Adds files/directories to <formula-name>. No symlinks created.
 
-    ./cm add --link [<file> ...] <formula-name>
-        Adds the specified files to <formula-name> and symlinks it.
+    ./cm add --link [<path> ...] <formula-name>
+        Adds files/directories to to <formula-name> and symlinks it.
 
 OPTIONS:
     -f, --formula <formula-name>    Creates a formula <formula-name>
