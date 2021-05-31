@@ -7,7 +7,8 @@ apply_link() {
 
         filepath=$(echo "$line" | awk '{print $3}')
 
-        ln -svf "$filepath" "$symlink"
+        out=$(ln -svf "$filepath" "$symlink")
+        info "Created symbolic link: $out"
     done
 }
 
@@ -15,7 +16,7 @@ apply_links_from_file() {
     local links_file_path="$1"
     local dry_run="$2"
     
-    if [[ $dry_run ]]; then
+    if [[ $dry_run = true ]]; then
         cat "$links_file_path"
     else 
         while read -r line; do

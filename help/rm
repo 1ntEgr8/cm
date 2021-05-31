@@ -2,7 +2,7 @@ cm-rm
 
 USAGE:
     ./cm rm [item ...]
-        Attempts to remove each item.
+        Attempts to remove each item, where item is either a file or directory.
  
 NOTES:
     If the item to be removed has a link in ./links, cm will ask if you

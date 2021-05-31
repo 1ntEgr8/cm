@@ -11,9 +11,10 @@ USAGE:
         Lists the formula that will be installed in the order in which they
         will be executed
 
+OPTIONS:
+    --dry-run       Lists formula that will be installed (in the order of processing)
+    -v, --verbose   Verbose output 
+
 NOTES:
     Installation order:
-        - Look for a formula file in the current working directory. If it
-          exists, execute it
-        - Repeat the above step for each directory in the current working
-          directory
+        - DFS (conflicts resolved using lexicographical order)

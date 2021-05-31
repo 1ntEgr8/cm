@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+test_apply_simple() {
+    touch "$sandbox/test_file"
+
+    mkdir "$sandbox/foo"
+    touch "$sandbox/foo/links"
+    touch "$sandbox/foo/formula"
+    
+    path_to_file=$(norm_path "$sandbox/test_file")
+    echo "~${path_to_file/$HOME} -> $sandbox/foo/test_file" > "$sandbox/foo/links"
+
+    ./cm apply "$sandbox/foo"
+
+    [[ -L "$sandbox/test_file" ]]
+}
+
+main() {
+    run test_apply_simple
+}
+
+"$@"

@@ -54,7 +54,7 @@ add_item_to_formula() {
     
     cp -R "$item" "$formula"
 
-    if [[ "$flag_link" ]]; then
+    if [[ "$flag_link" = true ]]; then
       if [[ -d "$item" ]]; then
           rm -rf "$item"
       fi
@@ -70,8 +70,8 @@ add_item_to_formula() {
 
 
 main() {
-    local flag_formula
-    local flag_link
+    local flag_formula=false
+    local flag_link=false
 
     while [[ $# -ne 0 ]]; do
         case $1 in
@@ -89,7 +89,7 @@ main() {
         esac
     done
 
-    if [[ $flag_formula && ! $flag_link ]]; then
+    if [[ $flag_formula = true && $flag_link = false ]]; then
         if [[ $# -lt 1 ]]; then
             error "Insufficient number of args"
         fi

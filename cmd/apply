@@ -5,14 +5,14 @@ set -e
 main() {
     for formula in "$@"; do
         if ! is_formula "$formula"; then
-            error "$formula is not a formula"
+            error "'$formula' is not a formula"
         fi
 
         links_file="$formula/links"
         if [[ -e "$links_file" ]]; then
             apply_links_from_file "$links_file"
         else
-            info "no 'links' file found for $formula; skipping"
+            info "No 'links' file found for $formula; skipping"
         fi
     done
 }
