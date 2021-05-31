@@ -50,7 +50,7 @@ rm_item() {
     item="$(norm_path $item)"
     
     handle_linked "$item" ||
-    if [[ -d "$item" ]]; then
+    if [[ -d "$item" && ! -L "$item" ]]; then
         for subitem in $(ls -A "$item"); do
             if [[   ! "$subitem" = "links" && \
                     ! "$subitem" = "formula" \
