@@ -3,14 +3,12 @@
 apply_link() {
     for line in "$@"; do
         target=$(echo "$line" | awk '{print $1}')
-        target=${symlink/#\~/$HOME}
+        target=${target/#\~/$HOME}
 
         source=$(echo "$line" | awk '{print $3}')
-        
-        if [[ ! -L "$target" ]]; then
-            out=$(ln -svf "$(norm_path $source)" "$(norm_path $target)")
-            info "Created symbolic link: $out"
-        fi
+
+        out=$(ln -svf "$(norm_path $source)" "$(norm_path $target)")
+        info "Created symbolic link: $out"
     done
 }
 
