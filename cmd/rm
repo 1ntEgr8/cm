@@ -12,12 +12,8 @@ handle_linked() {
     fi
     local links_path="$item_dir"/links
     
-    echo "ITEM $item"    
-
     if [[ -e "$links_path" ]]; then
         if out=$(grep -F "$(basename $item)" "$links_path"); then
-            echo "GREPPED"
-
             # grab symlink from file
             # file format: source -> target
             symlink=$(echo "$out" | awk '{print $1}')

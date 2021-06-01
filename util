@@ -2,13 +2,15 @@
 
 apply_link() {
     for line in "$@"; do
-        symlink=$(echo "$line" | awk '{print $1}')
-        symlink=${symlink/#\~/$HOME}
+        target=$(echo "$line" | awk '{print $1}')
+        target=${symlink/#\~/$HOME}
 
-        filepath=$(echo "$line" | awk '{print $3}')
-
-        out=$(ln -svf "$(norm_path $filepath)" "$(norm_path $symlink)")
-        info "Created symbolic link: $out"
+        source=$(echo "$line" | awk '{print $3}')
+        
+        if [[ ! -L "$target" ]]; then
+            out=$(ln -svf "$(norm_path $source)" "$(norm_path $target)")
+            info "Created symbolic link: $out"
+        fi
     done
 }
 
