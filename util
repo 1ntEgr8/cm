@@ -7,8 +7,8 @@ apply_link() {
 
         source=$(echo "$line" | awk '{print $3}')
         
-        if [[ -L "$(norm_path $target)" ]]; then
-            rm "$(norm_path $target)" 
+        if [[ -e "$(norm_path $target)" ]]; then
+            rm -rf "$(norm_path $target)" 
         fi
         out=$(ln -svf "$(norm_path $source)" "$(norm_path $target)")
         info "Created symbolic link: $out"
