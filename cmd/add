@@ -57,7 +57,7 @@ add_item_to_formula() {
                 source="$formula/$(basename "$item")"
             fi
                         
-            out=$(ln -svf "$source" "$item")
+            out=$(ln -svf "$(norm_path $source)" "$item")
             info "Created symlink: $out"
             save_link_to_file "$item" "$source" "$formula/links"
         fi

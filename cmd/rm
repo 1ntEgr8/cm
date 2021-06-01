@@ -5,11 +5,19 @@ set -e
 handle_linked() {
     local item="$1"
     local item_dir
-    item_dir=$(dirname "$item")
+    if [[ -d "$item" ]]; then
+        item_dir="$item" 
+    else
+        item_dir=$(dirname "$item")
+    fi
     local links_path="$item_dir"/links
+    
+    echo "ITEM $item"    
 
     if [[ -e "$links_path" ]]; then
         if out=$(grep -F "$(basename $item)" "$links_path"); then
+            echo "GREPPED"
+
             # grab symlink from file
             # file format: source -> target
             symlink=$(echo "$out" | awk '{print $1}')

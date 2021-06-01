@@ -7,7 +7,7 @@ apply_link() {
 
         filepath=$(echo "$line" | awk '{print $3}')
 
-        out=$(ln -svf "$filepath" "$symlink")
+        out=$(ln -svf "$(norm_path $filepath)" "$(norm_path $symlink)")
         info "Created symbolic link: $out"
     done
 }
