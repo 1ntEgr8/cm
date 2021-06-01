@@ -33,8 +33,8 @@ is_formula() {
 }
 
 norm_path() {
-    local item="$1"
-    echo "$(cd "$(dirname "$item")" || exit; pwd)/$(basename "$item")"
+    local path="$1"
+    echo "$(cd "$(dirname "$path")" || exit; pwd)/$(basename "$path")"
 }
 
 export -f apply_link

@@ -2,10 +2,10 @@
 
 check_correct_no_link_formula() {
     local formula="$1"
-    local item="$2"
+    local path="$2"
     
     # shellcheck disable=SC2154
-    [[  (-z "$item" || -e "${sandbox}/$formula/$(basename "$item")") && \
+    [[  (-z "$path" || -e "${sandbox}/$formula/$(basename "$path")") && \
         -e "${sandbox}/$formula/formula" && \
         ! -e "${sandbox}/$formula/links" \
     ]]
@@ -13,20 +13,20 @@ check_correct_no_link_formula() {
 
 check_correct_link_formula() {
     local formula="$1"
-    local item="$2"
+    local path="$2"
 
-    abs_path_to_file=$(norm_path "${sandbox}/$item")
-    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/$formula/$(basename "$item")"
+    abs_path_to_file=$(norm_path "${sandbox}/$path")
+    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/$formula/$(basename "$path")"
 
     echo "LINK LINE TO FIND: " "$link_line"
 
     grep -Fq "$link_line" "${sandbox}/$formula/links"
     search_status=$?
 
-    [[  -e "${sandbox}/$formula/$(basename "$item")" && \
+    [[  -e "${sandbox}/$formula/$(basename "$path")" && \
         -e "${sandbox}/$formula/formula" && \
         -e "${sandbox}/$formula/links" && \
-        -L "${sandbox}/$(basename "$item")" && \
+        -L "${sandbox}/$(basename "$path")" && \
         $search_status -eq 0
     ]]
 }
