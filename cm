@@ -9,7 +9,7 @@ source "$base/util"
 source "$base/env"
 
 if [[ $# -eq 0 ]]; then
-    help_text
+    "$base/cmd/help" "main" "index"
 fi
 
 if [[ ! -e "$base/cmd/$cmd" ]]; then
