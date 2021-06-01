@@ -3,7 +3,7 @@
 set -e
 
 create_formula() {
-    formula="$1"
+    local formula="$1"
     
     if [[ -e "$formula/formula" ]]; then
       error "formula $formula already exists"
@@ -11,6 +11,7 @@ create_formula() {
 
     mkdir -p "$formula"
     touch "$formula/formula"
+    # shellcheck disable=SC2154
     cp "$base/templates/formula_template" "$formula/formula"
     chmod +x "$formula/formula"
     info "Created formula $formula"
@@ -20,66 +21,86 @@ save_link_to_file() {
     local source="$1"
     local target="$2"
     local file="$3"
-    
     local line="~${source/$HOME} -> $target"
+
     info "Added '$line' to '$file'"
     echo "$line" >> "$file"
 }
 
-add_item_to_formula() {
-    local flag_link="$1"
+link_path() {
+    local normalized_path="$1"
+    local formula="$2"
+    local source
+    local target="$normalized_path"
+    
+    if [[ -d "$normalized_path" ]]; then
+        source="$formula" 
+        rm -rf "$normalized_path"
+    else
+        source="$formula/$(basename "$normalized_path")"
+    fi
+
+    local out
+    out=$(ln -svf "$(norm_path "$source")" "$target")
+
+    info "Created symlink: $out"
+    save_link_to_file "$normalized_path" "$source" "$formula/links"
+}
+
+add_path() {
+    local path="$1"
+    local formula="$2"
+    local should_link="$3"
+    local normalized_path
+    normalized_path="$(norm_path "$path")"
+
+    if [[ ! -e "$normalized_path" ]]; then
+        error "'$normalized_path' does not exist" 
+    fi
+    
+    if [[ ! -e "$formula/formula" ]]; then
+        create_formula "$formula"
+    fi
+
+    # If the path is a directory, copy over the entries inside the directory
+    # and not the directory itself
+    if [[ -d "$normalized_path" ]]; then
+        cp -r "$normalized_path"/* "$formula"
+    else
+        cp "$normalized_path" "$formula"
+    fi
+    
+    if [[ "$should_link" = true ]]; then
+        link_path "$normalized_path" "$formula"
+    fi
+
+    info "Added $path to $formula"
+}
+
+add_paths_to_formula() {
+    local should_link="$1"
     local args=("$@")
     local formula=${args[${#args[@]}-1]}
     
     for i in $(seq 1 $((${#args[@]}-2))); do
-        local item=$(norm_path ${args[$i]})
-
-        if [[ ! -e $item ]]; then
-            error "'$item' does not exist" 
-        fi
-        
-        if [[ ! -e "$formula/formula" ]]; then
-            create_formula "$formula"
-        fi
-        
-        if [[ -d "$item" ]]; then
-            cp -r "$item"/* "$formula"
-        else
-            cp "$item" "$formula"
-        fi
-
-        if [[ "$flag_link" = true ]]; then
-            local source 
-            if [[ -d "$item" ]]; then
-                source="$formula"
-                rm -rf "$item"
-            else
-                source="$formula/$(basename "$item")"
-            fi
-                        
-            out=$(ln -svf "$(norm_path $source)" "$item")
-            info "Created symlink: $out"
-            save_link_to_file "$item" "$source" "$formula/links"
-        fi
-
-        info "Added $item to $formula"
+        add_path "${args[$i]}" "$formula" "$should_link"
     done
 }
 
-
 main() {
-    local flag_formula=false
-    local flag_link=false
-
+    local should_create_formula=false
+    local should_link=false
+    
+    # process flags
     while [[ $# -ne 0 ]]; do
         case $1 in
             -f|--formula)
             shift
-            flag_formula=true
+            should_create_formula=true
             ;;
             -l|--link)
             shift
-            flag_link=true
+            should_link=true
             ;;
             *)
             break
@@ -87,7 +108,7 @@ main() {
         esac
     done
 
-    if [[ $flag_formula = true && $flag_link = false ]]; then
+    if [[ $should_create_formula = true && $should_link = false ]]; then
         if [[ $# -lt 1 ]]; then
             error "Insufficient number of args"
         fi
@@ -96,7 +117,7 @@ main() {
         if [[ $# -lt 2 ]]; then
             error "Insufficient number of args"
         fi
-        add_item_to_formula $flag_link "$@"
+        add_paths_to_formula $should_link "$@"
     fi
 }
 
