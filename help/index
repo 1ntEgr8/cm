@@ -1,7 +1,7 @@
 cm - a dumb config manager
 
 USAGE:
-    ./cm [--help] subcommand [<args>]
+    cm [--help] subcommand [<args>]
 
 OPTIONS:
     --help      Prints this help text
@@ -13,4 +13,4 @@ SUBCOMMANDS:
     install     Install and configure formulae
     apply       Applies configuration stored in a formula
 
-See ./cm help <subcommand> for more information on a specific subcommand
+Run `cm help <subcommand>` for more information on a specific subcommand

@@ -3,13 +3,13 @@ cm-add
 Create a formula and add paths to it
 
 USAGE:
-    ./cm add --formula <formula-name>
+    cm add --formula <formula-name>
         Creates a formula named <formula-name>, where <formula-name> is a '/'
         delimited string. Creates intermediate directories as required. 
 
         For example,
         
-        $ ./cm add --formula my/editor/vim
+        $ cm add --formula my/editor/vim
 
         will create the following directory structure
 
@@ -18,10 +18,10 @@ USAGE:
             └── vim
                 └── formula
 
-    ./cm add [<path> ...] <formula-name>
+    cm add [<path> ...] <formula-name>
         Adds files/directories to <formula-name>. No symlinks created.
 
-    ./cm add --link [<path> ...] <formula-name>
+    cm add --link [<path> ...] <formula-name>
         Adds files/directories to to <formula-name> and symlinks it. Records
         the link in the 'links' file of <formula-name>, which is created if it
         doesn't exist.

@@ -3,16 +3,16 @@ cm-apply
 Applies the symlinks recorded in the 'links' file of a formula
 
 USAGE:
-    ./cm apply [<formula-name> ...]
+    cm apply [<formula-name> ...]
         Creates the symlinks declared in '<formula-name>/links' for each
         formula. If a symlink is already present, it will unlink it first, and
         then link again.
 
-    ./cm apply --copy [<formula-name> ...]
+    cm apply --copy [<formula-name> ...]
         Copies (and NOT symlink) files in '<formula-name> to the locations
         declared in the 'links' file of the formula.
 
-    ./cm apply --dry-run [<formula-name> ...]
+    cm apply --dry-run [<formula-name> ...]
         Lists the symlinks that will be created
 
 OPTIONS:

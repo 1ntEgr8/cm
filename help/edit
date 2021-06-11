@@ -3,7 +3,7 @@ cm-edit
 Edit the declaration of a formula
 
 USAGE:
-    ./cm edit <formula-name>
+    cm edit <formula-name>
         Opens "<formula-name>/formula" in vim for editing
 
 NOTES:

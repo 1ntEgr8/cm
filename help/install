@@ -3,10 +3,10 @@ cm-install
 Installs and configures software declared in a formula
 
 USAGE:
-    ./cm install [<formula-name> ...]
+    cm install [<formula-name> ...]
         Installs and configures each formula.
 
-    ./cm install --dry-run [<formula-name> ...]
+    cm install --dry-run [<formula-name> ...]
         Lists the formula that will be installed in the order in which they
         will be executed
 
