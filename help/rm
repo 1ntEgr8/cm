@@ -1,10 +1,16 @@
 cm-rm
 
+Removes files/directories tracked using `cm`.
+
 USAGE:
+    ./cm rm --dry-run [path ...]
+        Lists files/directories that will be removed.
+    
     ./cm rm [path ...]
         Attempts to remove files/directories
  
 NOTES:
-    If the path to be removed has a link in ./links, cm will ask if you
-    want to get rid of the symlink or leave a copy at that location. This
-    is done so as to avoid leaving broken symlinks in the system.
+    If the path to be removed has a symlink recorded in the 'links' file of a
+    formula, `cm` will ask if you want to get rid of the symlink or leave a
+    copy at that location. This is done so as to avoid leaving broken symlinks
+    in the system.
