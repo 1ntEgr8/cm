@@ -23,8 +23,8 @@ save_link_to_file() {
     local file="$3"
     local line="~${source/$HOME} -> $target"
 
-    info "Added '$line' to '$file'"
     echo "$line" >> "$file"
+    info "Added '$line' to '$file'"
 }
 
 link_path() {
@@ -43,14 +43,15 @@ link_path() {
     local out
     out=$(ln -svf "$(norm_path "$source")" "$target")
 
-    info "Created symlink: $out"
     save_link_to_file "$normalized_path" "$source" "$formula/links"
+
+    info "Created symlink '$out' and saved to '$formula/links'"
 }
 
 add_path() {
-    local path="$1"
-    local formula="$2"
-    local should_link="$3"
+    local should_link="$1"
+    local path="$2"
+    local formula="$3"
     local normalized_path
     normalized_path="$(norm_path "$path")"
 
@@ -74,7 +75,7 @@ add_path() {
         link_path "$normalized_path" "$formula"
     fi
 
-    info "Added $path to $formula"
+    info "Added '$path' to $formula"
 }
 
 add_paths_to_formula() {
@@ -83,7 +84,7 @@ add_paths_to_formula() {
     local formula=${args[${#args[@]}-1]}
     
     for i in $(seq 1 $((${#args[@]}-2))); do
-        add_path "${args[$i]}" "$formula" "$should_link"
+        add_path "$should_link" "${args[$i]}" "$formula"
     done
 }
 
@@ -109,14 +110,10 @@ main() {
     done
 
     if [[ $should_create_formula = true && $should_link = false ]]; then
-        if [[ $# -lt 1 ]]; then
-            error "Insufficient number of args"
-        fi
+        assert_num_args_at_least 1 $#
         create_formula "$1"
     else
-        if [[ $# -lt 2 ]]; then
-            error "Insufficient number of args"
-        fi
+        assert_num_args_at_least 2 $#
         add_paths_to_formula $should_link "$@"
     fi
 }

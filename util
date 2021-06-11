@@ -38,7 +38,16 @@ norm_path() {
     echo "$(cd "$(dirname "$path")" || exit; pwd)/$(basename "$path")"
 }
 
+assert_num_args_at_least() {
+    local expected="$1"
+    local actual="$2"
+    if [[ $actual -lt $expected ]]; then
+        error "Insufficient number of args. Expected $expected args."
+    fi
+}
+
 export -f apply_link
 export -f apply_links_from_file
 export -f is_formula
 export -f norm_path
+export -f assert_num_args_at_least

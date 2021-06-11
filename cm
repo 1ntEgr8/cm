@@ -10,6 +10,7 @@ source "$base/env"
 
 if [[ $# -eq 0 ]]; then
     "$base/cmd/help" "main" "index"
+    exit 0
 fi
 
 if [[ ! -e "$base/cmd/$cmd" ]]; then
