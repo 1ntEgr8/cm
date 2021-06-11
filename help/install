@@ -1,5 +1,7 @@
 cm-install
 
+Installs and configures software declared in a formula
+
 USAGE:
     ./cm install
         Installs and configures all formulae present in current working directory
