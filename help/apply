@@ -9,7 +9,7 @@ USAGE:
         then link again.
 
     cm apply --copy [<formula-name> ...]
-        Copies (and NOT symlink) files in '<formula-name> to the locations
+        Copies (and NOT symlink) files in <formula-name> to the locations
         declared in the 'links' file of the formula.
 
     cm apply --dry-run [<formula-name> ...]
