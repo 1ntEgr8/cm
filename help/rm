@@ -3,11 +3,14 @@ cm-rm
 Removes files/directories tracked using `cm`.
 
 USAGE:
-    ./cm rm --dry-run [path ...]
-        Lists files/directories that will be removed.
-    
     ./cm rm [path ...]
         Attempts to remove files/directories
+
+    ./cm rm --dry-run [path ...]
+        Lists files/directories that will be removed.
+
+OPTIONS:
+    --dry-run       Dry run of the rm operation
  
 NOTES:
     If the path to be removed has a symlink recorded in the 'links' file of a

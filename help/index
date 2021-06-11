@@ -8,9 +8,10 @@ OPTIONS:
     --version   Prints version info
 
 SUBCOMMANDS:
-    add         Add a file/formula to the config manager
+    add         Add a path/formula to the config manager
     edit        Edit a formula
-    rm          Remove files/formulae
+    rm          Remove paths/formulae
     install     Install and configure formulae
+    apply       Applies configuration stored in a formula
 
 See ./cm help <subcommand> for more information on a specific subcommand

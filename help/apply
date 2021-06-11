@@ -8,5 +8,13 @@ USAGE:
         formula. If a symlink is already present, it will unlink it first, and
         then link again.
 
+    ./cm apply --copy [<formula-name> ...]
+        Copies (and NOT symlink) files in '<formula-name> to the locations
+        declared in the 'links' file of the formula.
+
     ./cm apply --dry-run [<formula-name> ...]
         Lists the symlinks that will be created
+
+OPTIONS:
+    -c, --copy      Tells `cm` to perform a copy, and not a symlink
+    --dry-run       Dry-run of the apply operation

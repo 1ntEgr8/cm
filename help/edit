@@ -1,11 +1,18 @@
 cm-edit
 
+Edit the declaration of a formula
+
 USAGE:
     ./cm edit <formula-name>
         Opens "<formula-name>/formula" in vim for editing
 
 NOTES:
-    Every formula has to implement two functions: install and configure
+    Every formula has to implement two functions:
 
     install       Installs any required software for the formula
     configure     Post-install configuration
+
+    There are convenience variables declared in 'env'. Some examples
+    include $bin_install (the command used to install binaries), and
+    $app_install (the command used to install applications). The full list
+    can be found in 'env'
