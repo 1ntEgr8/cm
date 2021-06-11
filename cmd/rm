@@ -3,63 +3,75 @@
 set -e
 
 try_rm_linked_path() {
-    local normalized_path="$1"
-    local parent 
+    local dry_run="$1"
+    local normalized_path="$2"
+
+    local base_dir 
     if [[ -d "$normalized_path" ]]; then
-        parent="$normalized_path" 
+        base_dir="$normalized_path" 
     else
-        parent=$(dirname "$normalized_path")
+        base_dir=$(dirname "$normalized_path")
     fi
-    local links_path="$parent"/links
+    local links_path="$base_dir"/links
     
-    if [[ -e "$links_path" ]]; then
-        if out=$(grep -F "$(basename $normalized_path)" "$links_path"); then
-            # grab symlink from file
-            # file format: source -> target
-            symlink=$(echo "$out" | awk '{print $1}')
+    if [[ ! -e "$links_path" ]]; then
+        return 1
+    fi
+    
+    if out=$(grep -F "$normalized_path" "$links_path"); then
+        # grab symlink from file
+        # file format: source -> target
+        symlink=$(echo "$out" | awk '{print $1}')
 
-            # replace ~ with $HOME
-            symlink=${symlink/#\~/$HOME}
-
-            if [[ -L "$symlink" ]]; then
-                warn "'$symlink' is symlinked to '$normalized_path'"
-                warn "Removing '$normalized_path' will result in a broken symlink '$symlink'"
-                if yes_or_no "Do you want to keep a copy of '$normalized_path' at '$symlink'?"
-                then
-                    unlink "$symlink"
-                    cp -r "$normalized_path" "$symlink"
-                    info "Created a copy of '$normalized_path' at '$symlink'"
-                else
-                    unlink "$symlink"
-                fi
-            else
-                warn "'$symlink' is not a symlink"
-            fi
-            
-            # remove line from the 'links' file
-            sed -i '' "#$normalized_path#d" "$links_path"
-
-            # remove normalized_path
-            rm -r "$normalized_path"
-
+        if [[ $dry_run = true ]]; then
+            info "rm linked: '$symlink' -> '$normalized_path'"
             return 0
         fi
+        
+        if [[ -L "$symlink" ]]; then
+            unlink "$symlink"
+
+            warn "'$symlink' is symlinked to '$normalized_path'"
+            warn "Removing '$normalized_path' will result in a broken symlink '$symlink'"
+
+            if yes_or_no "Do you want to keep a copy of '$normalized_path' at '$symlink'?"
+            then
+                cp -r "$normalized_path" "$symlink"
+                info "Created a copy of '$normalized_path' at '$symlink'"
+            fi
+        else
+            warn "'$symlink' is not a symlink"
+        fi
+        
+        # remove line from the 'links' file
+        sed -i '' "#$normalized_path#d" "$links_path"
+
+        # remove normalized_path
+        rm -r "$normalized_path"
+
+        return 0
     fi
 
     return 1
 }
 
 try_rm_regular_path() {
-    local normalized_path="$1"
+    local dry_run="$1"
+    local normalized_path="$2"
     
+    if [[ $dry_run = true ]]; then
+        info "rm regular: '$normalized_path'"
+        return 0
+    fi
+
     # We only want to traverse non-symlinked directories to avoid removing the
     # files it points to
     if [[ -d "$normalized_path" && ! -L "$normalized_path" ]]; then
-        for subpath in $(ls -A "$normalized_path"); do
+        for subpath in "$normalized_path"/*; do
             # Do not remove the 'links' file just yet, we need it to detect symlinks
             # See try_rm_linked_path
-            if [[ ! "$subpath" = "links" ]]; then
-                rm_path "$normalized_path/$subpath"
+            if [[ ! "$subpath" = "$normalized_path/links" ]]; then
+                rm_path "$dry_run" "$subpath"
             fi
         done
 
@@ -75,20 +87,38 @@ try_rm_regular_path() {
 }
 
 rm_path() {
-    local path="$1"
+    local dry_run="$1"
+    local path="$2"
+
     local normalized_path
     normalized_path="$(norm_path "$path")"
     
-    try_rm_linked_path "$normalized_path" ||
-    try_rm_regular_path "$normalized_path"
-
-    info "Removed '$normalized_path'"
+    try_rm_linked_path "$dry_run" "$normalized_path" ||
+    try_rm_regular_path "$dry_run" "$normalized_path"
+    
+    if [[ $dry_run = false ]]; then
+        info "Removed '$normalized_path'"
+    fi
 }
 
 main() {
+    local dry_run=false
+
+    while [[ $# -ne 0 ]]; do
+        case $1 in
+            --dry-run)
+                shift
+                dry_run=true
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+
     for arg in "$@"; do
         if [[ -e "$arg" ]]; then
-            rm_path "$arg"
+            rm_path $dry_run "$arg"
         else
             error "'$arg' does not exist"
         fi

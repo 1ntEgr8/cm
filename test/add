@@ -15,8 +15,9 @@ check_correct_link_formula() {
     local formula="$1"
     local path="$2"
 
-    abs_path_to_file=$(norm_path "${sandbox}/$path")
-    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/$formula/$(basename "$path")"
+    source=$(norm_path "${sandbox}/$path")
+    target=$(norm_path "${sandbox}/$formula/$(basename "$path")")
+    link_line="$source -> $target"
 
     echo "LINK LINE TO FIND: " "$link_line"
 
@@ -104,8 +105,9 @@ test_add_link_dir() {
 
     ./cm add -l "${sandbox}/test_dir" "${sandbox}/foo"
 
-    abs_path_to_file=$(norm_path "${sandbox}/test_dir")
-    link_line="~${abs_path_to_file#$HOME} -> ${sandbox}/foo"
+    source=$(norm_path "${sandbox}/test_dir")
+    target=$(norm_path "${sandbox}/foo")
+    link_line="$source -> $target"
     
     grep -Fq "$link_line" "${sandbox}/foo/links"
     search_status=$?

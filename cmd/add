@@ -21,7 +21,7 @@ save_link_to_file() {
     local source="$1"
     local target="$2"
     local file="$3"
-    local line="~${source/$HOME} -> $target"
+    local line="$(norm_path $source) -> $(norm_path $target)"
 
     echo "$line" >> "$file"
     info "Added '$line' to '$file'"
