@@ -1,6 +1,6 @@
 cm-rm
 
-Removes files/directories tracked using `cm`.
+Removes files/directories tracked using `cm`
 
 USAGE:
     cm rm [path ...]
