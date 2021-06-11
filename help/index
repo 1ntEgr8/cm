@@ -1,11 +1,10 @@
 cm - a dumb config manager
 
 USAGE:
-    ./cm [--help] [--version] subcommand [<args>]
+    ./cm [--help] subcommand [<args>]
 
 OPTIONS:
     --help      Prints this help text
-    --version   Prints version info
 
 SUBCOMMANDS:
     add         Add a path/formula to the config manager
