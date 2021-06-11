@@ -25,12 +25,6 @@ install_formula() {
             info "Installed '$formula/formula'"
             "$formula/formula" configure
             info "Configured '$formula/formula'"
-
-            if [[ -f "$formula/links" ]]; then
-                apply_links_from_file "$formula/links" "$dry_run"
-            else
-                info "'$formula/links' does not exist; skipping apply links"
-            fi
         fi
     fi
     
