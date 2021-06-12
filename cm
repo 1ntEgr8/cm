@@ -8,6 +8,11 @@ cmd="$1"
 source "$base/util"
 source "$base/env"
 
+# source user-defined env if exists
+if [[ -e "./env" ]]; then
+  source "./env"
+fi
+
 if [[ $# -eq 0 ]]; then
     "$base/cmd/help" "main" "index"
     exit 0
