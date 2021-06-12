@@ -110,6 +110,9 @@ main() {
                 shift
                 dry_run=true
                 ;;
+            -*)
+                invalid_opt_error "$1"
+                ;;
             *)
                 break
                 ;;

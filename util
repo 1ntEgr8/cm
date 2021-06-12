@@ -1,33 +1,5 @@
 #!/usr/bin/env bash
 
-apply_link() {
-    for line in "$@"; do
-        target=$(echo "$line" | awk '{print $1}')
-        target=${target/#\~/$HOME}
-
-        source=$(echo "$line" | awk '{print $3}')
-        
-        if [[ -e "$(norm_path $target)" ]]; then
-            rm -rf "$(norm_path $target)" 
-        fi
-        out=$(ln -svf "$(norm_path $source)" "$(norm_path $target)")
-        info "Created symbolic link: $out"
-    done
-}
-
-apply_links_from_file() {
-    local links_file_path="$1"
-    local dry_run="$2"
-    
-    if [[ $dry_run = true ]]; then
-        cat "$links_file_path"
-    else 
-        while read -r line; do
-            apply_link "$line"            
-        done < "$links_file_path"
-    fi
-}
-
 is_formula() {
     local dir="$1"
     [[ -d $dir && -e $dir/formula ]]
@@ -46,8 +18,12 @@ assert_num_args_at_least() {
     fi
 }
 
-export -f apply_link
-export -f apply_links_from_file
+invalid_opt_error() {
+  local opt="$1"
+  error "Invalid option '$opt'"
+}
+
 export -f is_formula
 export -f norm_path
 export -f assert_num_args_at_least
+export -f invalid_opt_error

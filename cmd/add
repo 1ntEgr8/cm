@@ -96,16 +96,19 @@ main() {
     while [[ $# -ne 0 ]]; do
         case $1 in
             -f|--formula)
-            shift
-            should_create_formula=true
-            ;;
+                shift
+                should_create_formula=true
+                ;;
             -l|--link)
-            shift
-            should_link=true
-            ;;
+                shift
+                should_link=true
+                ;;
+            -*)
+                invalid_opt_error "$1" 
+                ;;
             *)
-            break
-            ;;
+                break
+                ;;
         esac
     done
 

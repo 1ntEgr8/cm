@@ -50,7 +50,7 @@ main() {
                 verbose=true
                 ;; 
             -*)
-                error "Invalid flag: $arg"
+                invalid_opt_error "$arg"
                 ;;
             *)
                 break

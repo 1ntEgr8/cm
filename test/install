@@ -76,49 +76,42 @@ test_install_formula_nested() {
 [info] Installed '$sandbox/bar/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/bar/formula'
-[info] '$sandbox/bar/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/baz/c/d'
 [info] FIXME: installing
 [info] Installed '$sandbox/baz/c/d/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/baz/c/d/formula'
-[info] '$sandbox/baz/c/d/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/baz/c'
 [info] FIXME: installing
 [info] Installed '$sandbox/baz/c/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/baz/c/formula'
-[info] '$sandbox/baz/c/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/baz'
 [info] FIXME: installing
 [info] Installed '$sandbox/baz/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/baz/formula'
-[info] '$sandbox/baz/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/foo/a'
 [info] FIXME: installing
 [info] Installed '$sandbox/foo/a/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/foo/a/formula'
-[info] '$sandbox/foo/a/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/foo/b'
 [info] FIXME: installing
 [info] Installed '$sandbox/foo/b/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/foo/b/formula'
-[info] '$sandbox/foo/b/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox/foo'
 [info] FIXME: installing
 [info] Installed '$sandbox/foo/formula'
 [info] FIXME: configuring
 [info] Configured '$sandbox/foo/formula'
-[info] '$sandbox/foo/links' does not exist; skipping apply links
 [done]
 [info] Processing '$sandbox'
 [done]

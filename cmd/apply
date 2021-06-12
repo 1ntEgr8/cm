@@ -2,7 +2,61 @@
 
 set -e
 
+apply() {
+    local copy="$1"
+    local line="$2"
+
+    target=$(echo "$line" | awk '{print $1}' | norm_path)
+    source=$(echo "$line" | awk '{print $3}' | norm_path)
+
+    if [[ -e "$target" ]]; then
+        rm -rf "$target"
+    fi
+    if [[ $copy = true ]]; then
+        cp -R "$source" "$target"
+        info "Created a copy of '$source' at '$target'"
+    else
+        out=$(ln -svf "$source" "$target")
+        info "Created symbolic link: $out"
+    fi
+}
+
+apply_links_from_file() {
+    local dry_run="$1"
+    local copy="$2"
+    local links_file_path="$3"
+
+    if [[ $dry_run = true ]]; then
+        cat "$links_file_path"
+    else
+        while read -r line; do
+            apply "$copy" "$line" 
+        done < "$links_file_path"
+    fi
+}
+
 main() {
+    local copy=false
+    local dry_run=false
+
+    while [[ $# -ne 0 ]]; do
+        case "$1" in
+            -c|--copy)
+                shift
+                copy=true
+                ;;
+            --dry-run)
+                shift
+                dry_run=true
+                ;;
+            -*)
+                invalid_opt_error $1
+                ;;
+            *)
+                break
+        esac
+    done
+
     for formula in "$@"; do
         if ! is_formula "$formula"; then
             error "'$formula' is not a formula"
@@ -10,7 +64,7 @@ main() {
 
         links_file="$formula/links"
         if [[ -e "$links_file" ]]; then
-            apply_links_from_file "$links_file"
+            apply_links_from_file "$dry_run" "$copy" "$links_file"
         else
             info "No 'links' file found for $formula; skipping"
         fi
