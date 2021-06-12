@@ -21,10 +21,17 @@ save_link_to_file() {
     local source="$1"
     local target="$2"
     local file="$3"
-    local line="$(norm_path $source) -> $(norm_path $target)"
+
+    source="$(norm_path $source)"
+    target="$(norm_path $target)"
+    local line="$source -> $target"
+
+    if out=$(grep -F "$target" "$file"); then
+        error "Link failed: Another link to '$target' already exists in '$file'"
+    fi
 
     echo "$line" >> "$file"
-    info "Added '$line' to '$file'"
+    info "Appended '$line' to '$file'"
 }
 
 link_path() {
