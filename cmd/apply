@@ -4,13 +4,20 @@ set -e
 
 apply() {
     local copy="$1"
-    local line="$2"
+    local force_remove="$2"
+    local line="$3"
+    local target 
+    local source
 
-    target=$(echo "$line" | awk '{print $1}' | norm_path)
-    source=$(echo "$line" | awk '{print $3}' | norm_path)
+    target=$(norm_path $(echo "$line" | awk '{print $1}'))
+    source=$(norm_path $(echo "$line" | awk '{print $3}'))
 
     if [[ -e "$target" ]]; then
-        rm -rf "$target"
+        if [[ $force_remove = true ]]; then
+            rm -rf "$target"
+        else
+            error "'$target' already exists! Pass the '--rm' option to forcefully remove it"
+        fi
     fi
     if [[ $copy = true ]]; then
         cp -R "$source" "$target"
@@ -24,13 +31,15 @@ apply() {
 apply_links_from_file() {
     local dry_run="$1"
     local copy="$2"
-    local links_file_path="$3"
+    local force_remove="$3"
+    local links_file_path="$4"
 
     if [[ $dry_run = true ]]; then
         cat "$links_file_path"
     else
+        cat "$links_file_path"
         while read -r line; do
-            apply "$copy" "$line" 
+            apply "$copy" "$force_remove" "$line" 
         done < "$links_file_path"
     fi
 }
@@ -38,6 +47,7 @@ apply_links_from_file() {
 main() {
     local copy=false
     local dry_run=false
+    local force_remove=false
 
     while [[ $# -ne 0 ]]; do
         case "$1" in
@@ -48,6 +58,10 @@ main() {
             --dry-run)
                 shift
                 dry_run=true
+                ;;
+            --rm)
+                shift
+                force_remove=true
                 ;;
             -*)
                 invalid_opt_error $1
@@ -64,7 +78,7 @@ main() {
 
         links_file="$formula/links"
         if [[ -e "$links_file" ]]; then
-            apply_links_from_file "$dry_run" "$copy" "$links_file"
+            apply_links_from_file "$dry_run" "$copy" "$force_remove" "$links_file"
         else
             info "No 'links' file found for $formula; skipping"
         fi

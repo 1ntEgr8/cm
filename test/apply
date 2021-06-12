@@ -7,10 +7,14 @@ test_apply_simple() {
     touch "$sandbox/foo/links"
     touch "$sandbox/foo/formula"
     
-    path_to_file=$(norm_path "$sandbox/test_file")
-    echo "~${path_to_file/$HOME} -> $sandbox/foo/test_file" > "$sandbox/foo/links"
+    local source
+    source="$(norm_path "$sandbox/test_file")"
+    local target
+    target="$(norm_path "$sandbox/foo/test_file")"
 
-    ./cm apply "$sandbox/foo"
+    echo "$source -> $target" > "$sandbox/foo/links"
+
+    ./cm apply --rm "$sandbox/foo"
 
     [[ -L "$sandbox/test_file" ]]
 }
