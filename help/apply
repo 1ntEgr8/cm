@@ -17,4 +17,5 @@ USAGE:
 
 OPTIONS:
     -c, --copy      Tells `cm` to perform a copy, and not a symlink
+    --rm            Forcefully remove targets if they exist
     --dry-run       Dry-run of the apply operation

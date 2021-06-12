@@ -92,7 +92,6 @@ main() {
     local should_create_formula=false
     local should_link=false
     
-    # process flags
     while [[ $# -ne 0 ]]; do
         case $1 in
             -f|--formula)
