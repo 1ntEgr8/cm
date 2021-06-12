@@ -36,11 +36,14 @@ try_rm_linked_path() {
 
             if yes_or_no "Do you want to keep a copy of '$normalized_path' at '$symlink'?"
             then
+                rm "$normalized_path/formula"
+                rm "$normalized_path/links"
+
                 cp -r "$normalized_path" "$symlink"
                 info "Created a copy of '$normalized_path' at '$symlink'"
             fi
         else
-            warn "'$symlink' is not a symlink"
+            error "'$symlink' is not a symlink"
         fi
         
         # remove line from the 'links' file
@@ -77,7 +80,7 @@ try_rm_regular_path() {
 
         # Remove the 'links' file now if it exists
         if [[ -e "$normalized_path/links" ]]; then
-                rm "$normalized_path/links"
+            rm "$normalized_path/links"
         fi
 
         rm -d "$normalized_path"
