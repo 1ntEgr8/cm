@@ -73,14 +73,11 @@ try_rm_regular_path() {
     # We only want to traverse non-symlinked directories to avoid removing the
     # files it points to
     if [[ -d "$normalized_path" && ! -L "$normalized_path" ]]; then
-        for subpath in "$normalized_path"/*; do
-            if [[ ! -e "$subpath" ]]; then
-                break
-            fi
+        for subpath in $(ls -A "$normalized_path"); do
             # Do not remove the 'links' file just yet, we need it to detect symlinks
             # See try_rm_linked_path
-            if [[ ! "$subpath" = "$normalized_path/links" ]]; then
-                rm_path "$dry_run" "$subpath"
+            if [[ ! "$subpath" = "links" ]]; then
+                rm_path "$dry_run" "$normalized_path/$subpath"
             fi
         done
 
