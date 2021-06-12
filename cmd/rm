@@ -74,6 +74,9 @@ try_rm_regular_path() {
     # files it points to
     if [[ -d "$normalized_path" && ! -L "$normalized_path" ]]; then
         for subpath in "$normalized_path"/*; do
+            if [[ ! -e "$subpath" ]]; then
+                break
+            fi
             # Do not remove the 'links' file just yet, we need it to detect symlinks
             # See try_rm_linked_path
             if [[ ! "$subpath" = "$normalized_path/links" ]]; then
