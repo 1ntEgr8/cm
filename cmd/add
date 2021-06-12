@@ -25,8 +25,8 @@ save_link_to_file() {
     source="$(norm_path $source)"
     target="$(norm_path $target)"
     local line="$source -> $target"
-
-    if out=$(grep -F "$target" "$file"); then
+    
+    if [[ -e "$file" ]] && out=$(grep -F "$target" "$file"); then
         error "Link failed: Another link to '$target' already exists in '$file'"
     fi
 

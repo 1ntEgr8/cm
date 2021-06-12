@@ -36,9 +36,10 @@ try_rm_linked_path() {
 
             if yes_or_no "Do you want to keep a copy of '$normalized_path' at '$symlink'?"
             then
-                rm "$normalized_path/formula"
-                rm "$normalized_path/links"
-
+                if [[ -d "$normalized_path" ]]; then
+                    rm "$normalized_path/links"
+                    rm "$normalized_path/formula"
+                fi
                 cp -r "$normalized_path" "$symlink"
                 info "Created a copy of '$normalized_path' at '$symlink'"
             fi
@@ -47,7 +48,9 @@ try_rm_linked_path() {
         fi
         
         # remove line from the 'links' file
-        sed -i '' "#$normalized_path#d" "$links_path"
+        if [[ -e "$links_path" ]]; then
+            sed -i '' "#$normalized_path#d" "$links_path"
+        fi
 
         # remove normalized_path
         rm -r "$normalized_path"
